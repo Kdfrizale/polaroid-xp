@@ -15,4 +15,5 @@
     <string name="Picture_Border_Key">Border</string>
     <string name="Signed_Photo_Key">Message</string>
     <string name="Notification_Setting_Key">Notification</string>
+    <string name="Support_Us_Key">Support</string>
 </resources>

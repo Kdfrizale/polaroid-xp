@@ -24,7 +24,7 @@
         android:defaultValue="true"
         />
     <Preference
-        android:key=""
+        android:key="@string/Support_Us_Key"
         android:title="@string/Support_Us_Setting_Title"
         android:summary=""
         android:selectable="true"
