@@ -45,7 +45,7 @@ public class Polaroid_XP extends AppCompatActivity {
         switch(id){
             case R.id.action_settings:
                 //User chose Settings in the menu
-                Intent intent = new Intent(this, Settings_Page.class);
+                Intent intent = new Intent(this, TestSettingsActivity.class);
                 startActivity(intent);
                 return true;
             default:

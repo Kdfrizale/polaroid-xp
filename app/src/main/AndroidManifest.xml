@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="frizzell.flores.polaroidxp">
+
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -18,21 +20,28 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Settings_Page"
+        <activity
+            android:name=".Settings_Page"
             android:label="Settings Page"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.WithActionBar">
             android:parentActivityName="frizzell.flores.polaroidxp.Polaroid_XP"
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Polaroid_XP"
-                />
+                android:value=".Polaroid_XP" />
         </activity>
-
+        <activity
+            android:name=".TestSettingsActivity"
+            android:label="@string/title_activity_test_settings"
+            android:parentActivityName=".Polaroid_XP">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="frizzell.flores.polaroidxp.Polaroid_XP" />
+        </activity>
     </application>
 
 </manifest>
