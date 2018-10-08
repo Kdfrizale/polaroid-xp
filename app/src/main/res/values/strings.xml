@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Polaroid XP</string>
     <string name="action_settings">Settings</string>
+    <string name="action_testsettings">TestSettings</string>
     <string name="default_message">Hello World</string>
 
     <string name="Picture_Border_Setting_Title">Polaroid Picture Border</string>

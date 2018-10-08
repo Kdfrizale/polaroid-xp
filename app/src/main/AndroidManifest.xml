@@ -28,11 +28,10 @@
         <activity
             android:name=".Settings_Page"
             android:label="Settings Page"
-            android:theme="@style/AppTheme.WithActionBar">
-            android:parentActivityName="frizzell.flores.polaroidxp.Polaroid_XP"
+            android:parentActivityName=".Polaroid_XP">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Polaroid_XP" />
+                android:value="frizzell.flores.polaroidxp.Polaroid_XP" />
         </activity>
         <activity
             android:name=".TestSettingsActivity"
