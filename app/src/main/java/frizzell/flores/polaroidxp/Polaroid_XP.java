@@ -25,9 +25,20 @@ import java.util.Date;
 import java.util.List;
 
 public class Polaroid_XP extends AppCompatActivity {
-    static final int REQUEST_IMAGE_CAPTURE =1;
-    static final int CAMERA_RESULT = 2;
-    String mCurrentPhotoPath;
+    //Processes values
+    private static final int REQUEST_IMAGE_CAPTURE =1;
+    private static final int CAMERA_RESULT = 2;
+
+    //values saved/changed in Bundle
+    private String mCurrentPhotoPath;
+    private boolean picture_border_state;
+    private String picture_custom_message;
+
+    //value names saved in Bundle
+    private static final String saved_bundle_mCurrentPhotoPath = "mCurrentPhotoPath";
+    private static final String saved_bundle_picture_border_state = "picture_border_state";
+    private static final String saved_bundle_picture_custom_message = "picture_custom_message";
+
     private Uri imageUri;
     ImageView mImageView;
 
@@ -35,12 +46,12 @@ public class Polaroid_XP extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_polaroid__xp);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         //mImageView = (ImageView) findViewById(R.id.photo_imageView);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,7 +61,7 @@ public class Polaroid_XP extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab_camera = (FloatingActionButton) findViewById(R.id.floatingActionButton2);
+        FloatingActionButton fab_camera = findViewById(R.id.floatingActionButton2);
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +84,14 @@ public class Polaroid_XP extends AppCompatActivity {
 //                startActivityForResult(it, CAMERA_RESULT);
             }
         });
+
+        //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
+        //also to save the value of the photo path just in case.
+        if(savedInstanceState != null){
+            mCurrentPhotoPath = savedInstanceState.getString(saved_bundle_mCurrentPhotoPath);
+            picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
+            picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
+        }
     }
 
     @Override
@@ -111,6 +130,7 @@ public class Polaroid_XP extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        //Must be changed from a temp file as it will cause headaches and too many problem if we want to access the same picture again.
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -125,7 +145,7 @@ public class Polaroid_XP extends AppCompatActivity {
     private void sendTakePictureIntent(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {//if statement avoids crash if no app can handle request
-            File photoFile = null;
+            File photoFile;
             try{
                 photoFile = createImageFile();
             } catch(IOException ex){
@@ -147,15 +167,37 @@ public class Polaroid_XP extends AppCompatActivity {
         }
     }
 
+    //Saves the value in the bundle for next time app is accessed
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if (resultCode == RESULT_OK){
-            Bundle extras = data.getExtras();
-            Bitmap bmp = (Bitmap) extras.get("data");
+    protected void onSaveInstanceState(Bundle savingInstanceState){
+        super.onSaveInstanceState(savingInstanceState);
 
-            mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
-            mImageView.setImageBitmap(bmp);
-        }
+        savingInstanceState.putString(saved_bundle_mCurrentPhotoPath, mCurrentPhotoPath);
+        savingInstanceState.putBoolean(saved_bundle_picture_border_state, picture_border_state);
+        savingInstanceState.putString(saved_bundle_picture_custom_message, picture_custom_message);
     }
+
+    //Restores the value in the bundle for the next time app is accessed. Just in case app is force closed.
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState != null){
+            mCurrentPhotoPath = savedInstanceState.getString(saved_bundle_mCurrentPhotoPath);
+            picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
+            picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
+        }
+        //add image view here if it is to be included
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+//        super.onActivityResult(requestCode,resultCode,data);
+//        if (resultCode == RESULT_OK){
+////            Bundle extras = data.getExtras();
+////            Bitmap bmp = (Bitmap) extras.get("data");
+////
+////            mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
+////            mImageView.setImageBitmap(bmp);
+//        }
+//    }
 }
