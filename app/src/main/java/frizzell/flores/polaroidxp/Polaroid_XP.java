@@ -49,7 +49,7 @@ public class Polaroid_XP extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        //mImageView = (ImageView) findViewById(R.id.photo_imageView);
+        mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,27 +61,11 @@ public class Polaroid_XP extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab_camera = findViewById(R.id.floatingActionButton2);
+        FloatingActionButton fab_camera = findViewById(R.id.floatingActionButtonCamera);
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                PackageManager packageManager = getPackageManager();
-                List<ResolveInfo> activities = packageManager.queryIntentActivities(it,
-                        PackageManager.MATCH_DEFAULT_ONLY);
-                boolean isIntentSafe = activities.size() > 0;
-                if (isIntentSafe){
-                    //Intent intenttest = new Intent(Polaroid_XP.this, TestSettingsActivity.class);
-                    //Intent chooser = Intent.createChooser(it, "select camera");
-                    //Intent intent = new Intent(Intent.ACTION_SEND);
-                    startActivityForResult(it,REQUEST_IMAGE_CAPTURE);
-                }
-//                Intent it = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-//                it.putExtra(MediaStore.EXTRA_OUTPUT,
-//                        Uri.fromFile(photo));
-//                imageUri = Uri.fromFile(photo);
-//                startActivityForResult(it, CAMERA_RESULT);
+                dispatchTakePictureIntent();
             }
         });
 
@@ -125,40 +109,7 @@ public class Polaroid_XP extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        //Must be changed from a temp file as it will cause headaches and too many problem if we want to access the same picture again.
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void sendTakePictureIntent(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {//if statement avoids crash if no app can handle request
-            File photoFile;
-            try{
-                photoFile = createImageFile();
-            } catch(IOException ex){
-                return;
-            }
-            if(photoFile != null){
-                Uri photoURI = FileProvider.getUriForFile(this, "frizzell.flores.polaroidxp",photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-
-        }
-    }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -189,15 +140,14 @@ public class Polaroid_XP extends AppCompatActivity {
         //add image view here if it is to be included
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-//        super.onActivityResult(requestCode,resultCode,data);
-//        if (resultCode == RESULT_OK){
-////            Bundle extras = data.getExtras();
-////            Bitmap bmp = (Bitmap) extras.get("data");
-////
-////            mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
-////            mImageView.setImageBitmap(bmp);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if (resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            Bitmap bmp = (Bitmap) extras.get("data");
+
+            mImageView.setImageBitmap(bmp);
+        }
+    }
 }
