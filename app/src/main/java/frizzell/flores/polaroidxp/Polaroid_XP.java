@@ -29,7 +29,7 @@ public class Polaroid_XP extends AppCompatActivity {
     static final int CAMERA_RESULT = 2;
     String mCurrentPhotoPath;
     private Uri imageUri;
-//    ImageView mImageView;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class Polaroid_XP extends AppCompatActivity {
                     //Intent intenttest = new Intent(Polaroid_XP.this, TestSettingsActivity.class);
                     //Intent chooser = Intent.createChooser(it, "select camera");
                     //Intent intent = new Intent(Intent.ACTION_SEND);
-                    startActivity(it);
+                    startActivityForResult(it,REQUEST_IMAGE_CAPTURE);
                 }
 //                Intent it = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 //                File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
@@ -147,15 +147,15 @@ public class Polaroid_XP extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-//        super.onActivityResult(requestCode,resultCode,data);
-//        if (resultCode == RESULT_OK){
-////            Bundle extras = data.getExtras();
-////            Bitmap bmp = (Bitmap) extras.get("data");
-////
-////            mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
-////            mImageView.setImageBitmap(bmp);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if (resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            Bitmap bmp = (Bitmap) extras.get("data");
+
+            mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
+            mImageView.setImageBitmap(bmp);
+        }
+    }
 }
