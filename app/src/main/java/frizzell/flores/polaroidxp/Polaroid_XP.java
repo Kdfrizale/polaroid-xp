@@ -1,28 +1,23 @@
 package frizzell.flores.polaroidxp;
 
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+
 
 public class Polaroid_XP extends AppCompatActivity {
     //Processes values
@@ -30,16 +25,13 @@ public class Polaroid_XP extends AppCompatActivity {
     private static final int CAMERA_RESULT = 2;
 
     //values saved/changed in Bundle
-    private String mCurrentPhotoPath;
     private boolean picture_border_state;
     private String picture_custom_message;
 
     //value names saved in Bundle
-    private static final String saved_bundle_mCurrentPhotoPath = "mCurrentPhotoPath";
     private static final String saved_bundle_picture_border_state = "picture_border_state";
     private static final String saved_bundle_picture_custom_message = "picture_custom_message";
 
-    private Uri imageUri;
     ImageView mImageView;
 
     @Override
@@ -48,8 +40,8 @@ public class Polaroid_XP extends AppCompatActivity {
         setContentView(R.layout.activity_polaroid__xp);
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-
-        mImageView = (ImageView) findViewById(R.id.ReturnedImageView);
+        PreferenceManager.setDefaultValues(this, R.xml.settings_page, false);
+        mImageView = (ImageView) findViewById(R.id.returnedImageView);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +49,6 @@ public class Polaroid_XP extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
             }
         });
 
@@ -72,10 +63,19 @@ public class Polaroid_XP extends AppCompatActivity {
         //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
         //also to save the value of the photo path just in case.
         if(savedInstanceState != null){
-            mCurrentPhotoPath = savedInstanceState.getString(saved_bundle_mCurrentPhotoPath);
             picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
             picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
         }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        //TODO switch to SharedPreferenceListen so we only have to update when user edits fields
+        TextView captionTextView = (TextView) findViewById(R.id.captionTextView);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key),getResources().getString(R.string.default_message));
+        captionTextView.setText(captionPref);
     }
 
     @Override
@@ -104,17 +104,6 @@ public class Polaroid_XP extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
-
-        }
-    }
-
-
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
@@ -123,7 +112,6 @@ public class Polaroid_XP extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle savingInstanceState){
         super.onSaveInstanceState(savingInstanceState);
 
-        savingInstanceState.putString(saved_bundle_mCurrentPhotoPath, mCurrentPhotoPath);
         savingInstanceState.putBoolean(saved_bundle_picture_border_state, picture_border_state);
         savingInstanceState.putString(saved_bundle_picture_custom_message, picture_custom_message);
     }
@@ -133,7 +121,6 @@ public class Polaroid_XP extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState != null){
-            mCurrentPhotoPath = savedInstanceState.getString(saved_bundle_mCurrentPhotoPath);
             picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
             picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
         }
@@ -148,6 +135,13 @@ public class Polaroid_XP extends AppCompatActivity {
             Bitmap bmp = (Bitmap) extras.get("data");
 
             mImageView.setImageBitmap(bmp);
+        }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 }

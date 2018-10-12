@@ -9,10 +9,10 @@
     tools:showIn="@layout/activity_polaroid__xp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/captionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/default_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,10 +22,10 @@
         app:layout_constraintVertical_bias="0.883" />
 
     <ImageView
-        android:id="@+id/ReturnedImageView"
+        android:id="@+id/returnedImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/captionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
