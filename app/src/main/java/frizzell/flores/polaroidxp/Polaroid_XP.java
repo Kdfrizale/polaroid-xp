@@ -161,12 +161,26 @@ public class Polaroid_XP extends AppCompatActivity {
         }
     }
 
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            Log.e("polarioidXP", "is is writeable");
+            return true;
+        }
+        Log.e("polarioidXP", "is is not writeable");
+        return false;
+    }
+
     private File createImageFile() throws IOException {
+        isExternalStorageWritable();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
         //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         //File storageDir = new File("/images");
+        if (!storageDir.mkdirs()) {
+            Log.e("PolariodXP", "Directory not created");
+        }
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
