@@ -74,6 +74,14 @@ public class Polaroid_XP extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton fab_gallery = findViewById(R.id.floatingActionButtonGallery);
+        fab_gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            }
+        });
+
         //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
         //also to save the value of the photo path just in case.
         if(savedInstanceState != null){
@@ -186,7 +194,7 @@ public class Polaroid_XP extends AppCompatActivity {
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 Log.e("TAG PolaroidXp", "IO exception", ex);
-                getWritePermission();
+                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                 return;
             }
             // Continue only if the File was successfully created
@@ -200,17 +208,17 @@ public class Polaroid_XP extends AppCompatActivity {
         }
     }
 
-    private boolean getWritePermission(){
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-            return true;
-        }
-        else{
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+    private boolean isPermissionAllowed(String permissionToCheck){
+        return ContextCompat.checkSelfPermission(this,permissionToCheck) == PackageManager.PERMISSION_GRANTED;
+    }
 
+    private void askForPermission(String permissionToAskFor, int requestCode) {
+        if (!isPermissionAllowed(permissionToAskFor)) {
+            ActivityCompat.requestPermissions(this, new String[]{permissionToAskFor}, requestCode);
         }
-        return false;
+        //TODO remove this just here testing
+//        Snackbar permissionBlock = Snackbar.make(findViewById(R.id.polaroid_coorLayout),"App needs to be able to save the pictures you take",Snackbar.LENGTH_LONG);
+//        permissionBlock.show();
     }
 
     @Override

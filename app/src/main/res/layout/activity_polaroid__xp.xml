@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/polaroid_coorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Polaroid_XP">
@@ -13,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/AppToolbar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <include layout="@layout/content_polaroid__xp" />
 
@@ -29,18 +30,18 @@
         android:id="@+id/floatingActionButtonCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButtonGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
 
 </android.support.design.widget.CoordinatorLayout>
