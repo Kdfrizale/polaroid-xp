@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import frizzell.flores.polaroidxp.PermissionsHelper;
+import frizzell.flores.polaroidxp.StorageHelper;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String saved_bundle_picture_custom_message = "picture_custom_message";
 
     ImageView mImageView;
-    String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                PermissionsHelper.askForPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             }
         });
 
@@ -160,42 +162,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            Log.e("polarioidXP", "is is writeable");
-            return true;
-        }
-        Log.e("polarioidXP", "is is not writeable");
-        return false;
-    }
-
-    private File createImageFile() throws IOException {
-        isExternalStorageWritable();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        //File storageDir = new File("/images");
-        if (!storageDir.mkdirs()) {
-            Log.e("PolariodXP", "Directory not created");
-        }
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchTakePictureIntentVoid() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -203,11 +169,11 @@ public class MainActivity extends AppCompatActivity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = StorageHelper.createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 Log.e("TAG PolaroidXp", "IO exception", ex);
-                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                PermissionsHelper.askForPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE,MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                 return;
             }
             // Continue only if the File was successfully created
@@ -221,18 +187,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isPermissionAllowed(String permissionToCheck){
-        return ContextCompat.checkSelfPermission(this,permissionToCheck) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void askForPermission(String permissionToAskFor, int requestCode) {
-        if (!isPermissionAllowed(permissionToAskFor)) {
-            ActivityCompat.requestPermissions(this, new String[]{permissionToAskFor}, requestCode);
-        }
-        //TODO remove this just here testing
-//        Snackbar permissionBlock = Snackbar.make(findViewById(R.id.polaroid_coorLayout),"App needs to be able to save the pictures you take",Snackbar.LENGTH_LONG);
-//        permissionBlock.show();
-    }
+//    private boolean isPermissionAllowed(String permissionToCheck){
+//        return ContextCompat.checkSelfPermission(this,permissionToCheck) == PackageManager.PERMISSION_GRANTED;
+//    }
+//
+//    private void askForPermission(String permissionToAskFor, int requestCode) {
+//        if (!isPermissionAllowed(permissionToAskFor)) {
+//            ActivityCompat.requestPermissions(this, new String[]{permissionToAskFor}, requestCode);
+//        }
+//        //TODO remove this just here testing
+////        Snackbar permissionBlock = Snackbar.make(findViewById(R.id.polaroid_coorLayout),"App needs to be able to save the pictures you take",Snackbar.LENGTH_LONG);
+////        permissionBlock.show();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
