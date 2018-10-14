@@ -8,8 +8,6 @@ public class SettingsPageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-//        setSupportActionBar(toolbar);
         setupActionBar();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())

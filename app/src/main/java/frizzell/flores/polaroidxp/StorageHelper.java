@@ -10,30 +10,20 @@ import java.util.Date;
 
 public class StorageHelper {
     public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            Log.e("polarioidXP", "is is writeable");
-            return true;
-        }
-        Log.e("polarioidXP", "is is not writeable");
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     public static File createImageFile() throws IOException {
-        isExternalStorageWritable();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        //File storageDir = new File("/images");
-        if (!storageDir.mkdirs()) {
-            Log.e("PolariodXP", "Directory not created");
+        if(isExternalStorageWritable()){
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
+            //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            storageDir.mkdirs();
+
+            File image = File.createTempFile(imageFileName,".jpg",storageDir);
+            return image;
         }
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        return image;
+       return null;
     }
 }
