@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Polaroid_XP"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,20 +34,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings_Page"
+            android:name=".SettingsPageActivity"
             android:label="Settings Page"
-            android:parentActivityName=".Polaroid_XP">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="frizzell.flores.polaroidxp.Polaroid_XP" />
+                android:value="frizzell.flores.polaroidxp.MainActivity" />
         </activity>
         <activity
             android:name=".TestSettingsActivity"
             android:label="@string/title_activity_test_settings"
-            android:parentActivityName=".Polaroid_XP">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="frizzell.flores.polaroidxp.Polaroid_XP" />
+                android:value="frizzell.flores.polaroidxp.MainActivity" />
         </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"

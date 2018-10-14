@@ -1,7 +1,6 @@
 package frizzell.flores.polaroidxp;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class Polaroid_XP extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     //Processes values
     private static final int REQUEST_IMAGE_CAPTURE =1;
@@ -117,7 +116,7 @@ public class Polaroid_XP extends AppCompatActivity {
         switch(id){
             case R.id.action_settings:
                 //User chose Settings in the menu
-                Intent intent = new Intent(this, Settings_Page.class);
+                Intent intent = new Intent(this, SettingsPageActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.action_testsettings:
