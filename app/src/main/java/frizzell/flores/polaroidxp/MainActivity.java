@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-                PermissionsHelper.askForPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE,REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+                //PermissionsHelper.askForPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE,REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
             }
         });
 
