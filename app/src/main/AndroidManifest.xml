@@ -49,6 +49,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="frizzell.flores.polaroidxp.MainActivity" />
         </activity>
+        <activity
+            android:name=".GalleryActivity"
+            android:label="GalleryConst"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="frizzell.flores.polaroidxp.MainActivity" />
+        </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="frizzell.flores.polaroidxp"
