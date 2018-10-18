@@ -37,7 +37,6 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         viewHolder.title.setText(galleryList.get(i).getImage_title());
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Bitmap bmp = BitmapFactory.decodeFile(galleryList.get(i).getImage_Path());
-        Log.e("Debug", galleryList.get(i).getImage_Path());
         int origWidth = bmp.getWidth();
         int origHeight = bmp.getHeight();
         bmp = Bitmap.createScaledBitmap(bmp, origWidth / 10, origHeight / 10, false);
