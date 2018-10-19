@@ -18,10 +18,10 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<CreateList> galleryList;
+    private ArrayList<GalleryItemModel> galleryList;
     private Context context;
 
-    public MyAdapter(Context context, ArrayList<CreateList> galleryList){
+    public MyAdapter(Context context, ArrayList<GalleryItemModel> galleryList){
         this.galleryList = galleryList;
         this.context = context;
     }
@@ -34,20 +34,21 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i){
-        viewHolder.title.setText(galleryList.get(i).getImage_title());
+        //viewHolder.title.setText(galleryList.get(i).getImage_title());
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Bitmap bmp = BitmapFactory.decodeFile(galleryList.get(i).getImage_Path());
-        int origWidth = bmp.getWidth();
-        int origHeight = bmp.getHeight();
-        bmp = Bitmap.createScaledBitmap(bmp, origWidth / 10, origHeight / 10, false);
-        viewHolder.img.setImageBitmap(bmp);
+        Log.e("TAG:", "Helloooo");
+//        Bitmap bmp = BitmapFactory.decodeFile(galleryList.get(i));
+//        int origWidth = bmp.getWidth();
+//        int origHeight = bmp.getHeight();
+//        bmp = Bitmap.createScaledBitmap(bmp, origWidth / 10, origHeight / 10, false);
+        viewHolder.img.setImageBitmap(galleryList.get(i).getImg());
         //viewHolder.img.setImageResource((galleryList.get(i).getImage_ID()));
-        viewHolder.img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show();
-            }
-        });
+//        viewHolder.img.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override
@@ -55,13 +56,12 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return galleryList.size();
     }
 
+
+
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView title;
         private ImageView img;
         public ViewHolder(View view) {
             super(view);
-
-            title = (TextView)view.findViewById(R.id.title);
             img = (ImageView) view.findViewById(R.id.img);
         }
     }
