@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    //private ArrayList<GalleryItemModel> galleryList;
     private File[] galleryList;
     private Context context;
     private View myView;
@@ -40,31 +39,15 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i){
-        //viewHolder.title.setText(galleryList.get(i).getImage_title());
-        //viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Log.e("TAG:", "Helloooo");
         File image = galleryList[i];
+        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(this.myView).load(image).into(viewHolder.img);
-//        Bitmap bmp = BitmapFactory.decodeFile(galleryList.get(i));
-//        int origWidth = bmp.getWidth();
-//        int origHeight = bmp.getHeight();
-//        bmp = Bitmap.createScaledBitmap(bmp, origWidth / 10, origHeight / 10, false);
-        //viewHolder.img.setImageBitmap(galleryList.get(i).getImg());
-        //viewHolder.img.setImageResource((galleryList.get(i).getImage_ID()));
-//        viewHolder.img.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 
     @Override
     public int getItemCount(){
         return galleryList.length;
     }
-
-
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView img;
