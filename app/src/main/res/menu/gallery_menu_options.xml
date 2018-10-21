@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="frizzell.flores.polaroidxp.MainActivity">
+    <item
+        android:id="@+id/action_gallery_sort"
+        android:orderInCategory="100"
+        android:title="@string/action_gallery_sort"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_gallery_select_all"
+        android:orderInCategory="100"
+        android:title="@string/action_gallery_select_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_gallery_decode_selected"
+        android:orderInCategory="100"
+        android:title="@string/action_gallery_decode_selected"
+        app:showAsAction="never" />
+</menu>

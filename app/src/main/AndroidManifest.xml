@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name=".SettingsPageActivity"
-            android:label="Settings Page"
+            android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -51,7 +51,7 @@
         </activity>
         <activity
             android:name=".GalleryActivity"
-            android:label="GalleryConst"
+            android:label="@string/title_activity_gallery"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

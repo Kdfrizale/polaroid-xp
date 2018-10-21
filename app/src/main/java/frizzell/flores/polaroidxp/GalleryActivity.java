@@ -1,5 +1,6 @@
 package frizzell.flores.polaroidxp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
@@ -33,6 +36,30 @@ public class GalleryActivity extends AppCompatActivity {
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), file);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.gallery_menu_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch(id){
+            case R.id.action_gallery_sort:
+                //TODO create options to sort by date or something? maybe get rid of this method
+                return true;
+            case R.id.action_gallery_select_all:
+                //TODO create action to select all images,
+                return true;
+            case R.id.action_gallery_decode_selected:
+                //TODO implement decode function
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 
