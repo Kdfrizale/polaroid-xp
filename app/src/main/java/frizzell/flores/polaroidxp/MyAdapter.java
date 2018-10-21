@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -41,6 +43,17 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i){
         File image = galleryList[i];
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        viewHolder.img.setOnTouchListener(new OnGestureTouchListener(this.context) {
+            @Override
+            public void onLongClick(){
+                Log.e("TOUCH","LONG TOUCH");
+                Snackbar.make(myView, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+
+        });
+
         Glide.with(this.myView).load(image).into(viewHolder.img);
     }
 

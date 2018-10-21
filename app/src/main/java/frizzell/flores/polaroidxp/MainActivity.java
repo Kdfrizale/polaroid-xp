@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO switch to SharedPreferenceListen so we only have to update when user edits fields
         TextView captionTextView = (TextView) findViewById(R.id.captionTextView);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key),getResources().getString(R.string.default_message));
+        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key),getResources().getString(R.string.default_caption));
         captionTextView.setText(captionPref);
     }
 

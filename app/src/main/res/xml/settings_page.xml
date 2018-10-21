@@ -14,7 +14,7 @@
         android:key="@string/Signed_Photo_Key"
         android:title="@string/Signed_Photo_Setting_Title"
         android:summary="@string/Signature_Setting_Description"
-        android:defaultValue="@string/default_message"
+        android:defaultValue="@string/default_caption"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
