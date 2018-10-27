@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.beyka.tiffbitmapfactory.TiffConverter;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -33,6 +35,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
         File file[] = storageDir.listFiles();
+        file = convertTiffsToJpeg(file);
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), file);
         recyclerView.setAdapter(adapter);
@@ -60,6 +63,19 @@ public class GalleryActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private File[] convertTiffsToJpeg(File[] files){
+        for(File file : files){
+            File tempFile = new File(file.toString() + ".jpg");
+            if(!tempFile.exists() && (file.toString().endsWith(".tif") || file.toString().endsWith(".TIF"))) {
+                Log.e("FIle CONVERTED", file.toString());
+                TiffConverter.convertTiffJpg(file.toString(), file.toString() + ".jpg", null, null);
+            }
+        }
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
+        File file[] = storageDir.listFiles();
+        return file;
     }
 }
 

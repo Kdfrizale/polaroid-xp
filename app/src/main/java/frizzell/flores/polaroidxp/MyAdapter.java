@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -54,7 +55,14 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         });
 
-        Glide.with(this.myView).load(image).into(viewHolder.img);
+        if(image.toString().endsWith(".tif") || image.toString().endsWith(".TIF")){
+            //Ignore tiff images in directory
+            //TODO fix this, either reorder here, or only add jpeg files to the File [] gallerylist
+        }
+        else{
+            Glide.with(this.myView).load(image).into(viewHolder.img);
+        }
+
     }
 
     @Override
