@@ -16,7 +16,7 @@ import android.view.View;
 import org.beyka.tiffbitmapfactory.TiffConverter;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Vector;
 
 public class GalleryActivity extends AppCompatActivity {
     @Override
@@ -65,12 +65,29 @@ public class GalleryActivity extends AppCompatActivity {
         }
     }
 
+    //TODO analyze why thread.start() join() causes a deprecated warning?? for now ignore
+    @SuppressWarnings("deprecation")
     private File[] convertTiffsToJpeg(File[] files){
+        Vector<FileConverterThread> convertorThreads = new Vector<FileConverterThread>();
         for(File file : files){
-            File tempFile = new File(file.toString() + ".jpg");
-            if(!tempFile.exists() && (file.toString().endsWith(".tif") || file.toString().endsWith(".TIF"))) {
-                Log.e("FIle CONVERTED", file.toString());
-                TiffConverter.convertTiffJpg(file.toString(), file.toString() + ".jpg", null, null);
+            if((file.toString().endsWith(".tif") || file.toString().endsWith(".TIF"))) {
+                File tempFile = new File(file.toString() + ".jpg");
+                if(!tempFile.exists() ){
+                    convertorThreads.add(new FileConverterThread(file));
+                    //Log.e("FIle CONVERTED", file.toString());
+                    //TiffConverter.convertTiffJpg(file.toString(), file.toString() + ".jpg", null, null);
+                }
+            }
+        }
+        //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds)
+        for(FileConverterThread thread : convertorThreads){
+            thread.start();
+        }
+        for(FileConverterThread thread : convertorThreads){
+            try{
+                thread.join();
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
