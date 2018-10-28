@@ -49,6 +49,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onLongClick(){
                 Log.e("TOUCH","LONG TOUCH");
+                //TODO the myView goes out of scope and results in a crash
                 Snackbar.make(myView, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
