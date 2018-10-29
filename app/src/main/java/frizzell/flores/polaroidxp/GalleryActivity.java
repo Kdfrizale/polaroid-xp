@@ -27,6 +27,7 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
+        //TODO add storage permission check here
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
         File files[] = storageDir.listFiles();
         files = convertTiffsToJpeg(files);
