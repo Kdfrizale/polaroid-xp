@@ -1,19 +1,13 @@
 package frizzell.flores.polaroidxp;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import org.beyka.tiffbitmapfactory.TiffConverter;
 
 import java.io.File;
 import java.util.Vector;
@@ -34,10 +28,10 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        File file[] = storageDir.listFiles();
-        file = convertTiffsToJpeg(file);
+        File files[] = storageDir.listFiles();
+        files = convertTiffsToJpeg(files);
 
-        MyAdapter adapter = new MyAdapter(getApplicationContext(), file);
+        MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
         recyclerView.setAdapter(adapter);
     }
 
@@ -79,7 +73,7 @@ public class GalleryActivity extends AppCompatActivity {
                 }
             }
         }
-        //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds)
+        //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds) but in normal use there is almost no delay
         for(FileConverterThread thread : convertorThreads){
             thread.start();
         }
