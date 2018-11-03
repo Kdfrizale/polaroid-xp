@@ -76,6 +76,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
             img = (ImageView) view.findViewById(R.id.img);
+
         }
     }
 

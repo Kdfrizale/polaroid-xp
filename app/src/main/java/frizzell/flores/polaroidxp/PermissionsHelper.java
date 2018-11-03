@@ -4,6 +4,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+//TODO This class was replaced by an open source library, kept here only for reference, eventually remove
 public class PermissionsHelper {
     public static boolean isPermissionAllowed(android.app.Activity aActivity, String permissionToCheck){
         return ContextCompat.checkSelfPermission(aActivity,permissionToCheck) == PackageManager.PERMISSION_GRANTED;

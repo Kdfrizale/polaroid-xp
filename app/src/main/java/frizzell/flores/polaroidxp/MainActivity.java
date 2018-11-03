@@ -1,11 +1,12 @@
 package frizzell.flores.polaroidxp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -20,13 +21,17 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
     //Processes values
-    private static final int REQUEST_CODE_IMAGE_CAPTURE =1;
+    private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
 
 //    //values saved/changed in Bundle
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_polaroid__xp);
-        setSupportActionBar((Toolbar)findViewById(R.id.main_toolbar));
+        setSupportActionBar((Toolbar) findViewById(R.id.main_toolbar));
         PreferenceManager.setDefaultValues(this, R.xml.settings_page, false);
         mImageView = (ImageView) findViewById(R.id.returnedImageView);
 
@@ -74,6 +79,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                Log.d("PolaroidXP", "PERMISSIONS GRANTED");
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                Log.d("PolaroidXP", "PERMISSION DENIED, exiting app");
+                finish();
+                System.exit(0);
+            }
+        });
+
+        File folderForImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "polaroidXP");
+        if (!folderForImages.exists()) {
+            boolean successTemp = folderForImages.mkdirs();
+        }
+
+
 //        //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
 //        //also to save the value of the photo path just in case.
 //        if(savedInstanceState != null){
@@ -83,12 +108,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         //TODO switch to SharedPreferenceListen so we only have to update when user edits fields
         TextView captionTextView = (TextView) findViewById(R.id.captionTextView);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key),getResources().getString(R.string.default_caption));
+        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key), getResources().getString(R.string.default_caption));
         captionTextView.setText(captionPref);
     }
 
@@ -105,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch(id){
+        switch (id) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsPageActivity.class));
                 return true;
@@ -147,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 photoFile = StorageHelper.createImageFile();
             } catch (IOException ex) {
                 Log.e("PolaroidXP", "IO exception", ex);
-                PermissionsHelper.askForPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE,REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+                PermissionsHelper.askForPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
                 return;
             }
             if (photoFile != null) {
@@ -156,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(takePictureIntent, REQUEST_CODE_IMAGE_CAPTURE);
             }
         }
-        Snackbar.make(findViewById(R.id.polaroid_coorLayout),"ERROR: No Camera App found",Snackbar.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.polaroid_coorLayout), "ERROR: No Camera App found", Snackbar.LENGTH_LONG).show();
     }
 
 //    private boolean isPermissionAllowed(String permissionToCheck){
@@ -169,23 +194,4 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //
 //    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.e("PolaroidXP", "onRequestPermission received");
-        switch (requestCode) {
-            case REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.e("PolaroidXP", "PErmission received");
-                } else {
-                    Log.e("PolaroidXP", "PErmission not received");
-                    // TODO Critical permission denied
-                    // TODO Add popup dialog to use explaining this app needs the ability to save images and present a link
-                    // TODO to the settings page of the app's permissions
-                }
-                return;
-            }
-        }
-    }
 }
