@@ -41,7 +41,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i){
+    public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int i){
         File image = galleryList[i];
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
@@ -50,7 +50,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             public void onLongClick(){
                 Log.e("TOUCH","LONG TOUCH");
                 //TODO the myView goes out of scope and results in a crash
-                Snackbar.make(myView, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(viewHolder.img, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
 
