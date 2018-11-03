@@ -2,8 +2,10 @@ package frizzell.flores.polaroidxp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -44,7 +46,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int i){
-        File image = galleryList[i];
+        final File image = galleryList[i];
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         viewHolder.img.setOnTouchListener(new OnGestureTouchListener(this.context) {
@@ -54,6 +56,13 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 //TODO the myView goes out of scope and results in a crash
                 Snackbar.make(viewHolder.img, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+
+            @Override
+            public void onDoubleClick() {
+                Intent fullscreenImageIntent = new Intent(context, FullscreenImageActivity.class);
+                fullscreenImageIntent.putExtra("ImageFile", image);
+                context.startActivity(fullscreenImageIntent);
             }
 
         });
