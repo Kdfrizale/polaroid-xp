@@ -1,6 +1,7 @@
 package frizzell.flores.polaroidxp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
+import org.beyka.tiffbitmapfactory.TiffConverter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 //    private static final String saved_bundle_picture_custom_message = "picture_custom_message";
 
     ImageView mImageView;
+    File mWorkingImageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,16 +180,16 @@ public class MainActivity extends AppCompatActivity {
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile;
+            //File photoFile;
             try {
-                photoFile = StorageHelper.createImageFile();
+                mWorkingImageFile = StorageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
             } catch (IOException ex) {
                 Log.e("PolaroidXP", "IO exception", ex);
                 PermissionsHelper.askForPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
                 return;
             }
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "frizzell.flores.polaroidxp", photoFile);
+            if (mWorkingImageFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "frizzell.flores.polaroidxp", mWorkingImageFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_CODE_IMAGE_CAPTURE);
             }
@@ -193,14 +197,18 @@ public class MainActivity extends AppCompatActivity {
         Snackbar.make(findViewById(R.id.polaroid_coorLayout), "ERROR: No Camera App found", Snackbar.LENGTH_LONG).show();
     }
 
-//    private boolean isPermissionAllowed(String permissionToCheck){
-//        return ContextCompat.checkSelfPermission(this,permissionToCheck) == PackageManager.PERMISSION_GRANTED;
-//    }
-//
-//    private void askForPermission(String permissionToAskFor, int requestCode) {
-//        if (!isPermissionAllowed(permissionToAskFor)) {
-//            ActivityCompat.requestPermissions(this, new String[]{permissionToAskFor}, requestCode);
-//        }
-//
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_IMAGE_CAPTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if(mWorkingImageFile.exists()){
+                            Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
+                            File tempTiffImage = StorageHelper.createTiffFromJpeg(mWorkingImageFile.getName(),getString(R.string.tiffImagesFolder));
+                            TiffConverter.convertJpgTiff(mWorkingImageFile.toString(), tempTiffImage.toString(), null, null);
+                    }
+                }
+        }
+    }
 }
