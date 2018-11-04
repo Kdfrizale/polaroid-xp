@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "199145599998",
+    "firebase_url": "https://polaroidxp-dev.firebaseio.com",
+    "project_id": "polaroidxp-dev",
+    "storage_bucket": "polaroidxp-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199145599998:android:fcd6d604d6544b29",
+        "android_client_info": {
+          "package_name": "frizzell.flores.polaroidxp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199145599998-np7boqqr7k8dj2pd3a6bum2no8uoqgo7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "frizzell.flores.polaroidxp",
+            "certificate_hash": "52d51d46645102c785a256b9f6801325b69d510d"
+          }
+        },
+        {
+          "client_id": "199145599998-dvj750nl6rftdoqs3rbpuaopi9c6tid3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4Vw75cmwQHM43DuTgGlgVh3zZkGraV1U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199145599998-dvj750nl6rftdoqs3rbpuaopi9c6tid3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,6 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 import java.io.File;
 import java.util.Vector;
 
@@ -20,6 +23,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.gallery_layout);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.imagegallery);
@@ -70,9 +74,13 @@ public class GalleryActivity extends AppCompatActivity {
                 return true;
             case R.id.action_gallery_select_all:
                 //TODO create action to select all images,
-                return true;
+                //TODO note this is just a tempory crash me button to test our debugging and crash reporting services
+                throw new RuntimeException("This was a test crash");
+                //return true;
             case R.id.action_gallery_decode_selected:
                 //TODO implement decode function
+                //TODO note this is just a tempory crash me button to test our debugging and crash reporting services
+                Crashlytics.getInstance().crash();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

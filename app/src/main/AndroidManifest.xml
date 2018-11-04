@@ -4,6 +4,7 @@
 
     <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- <uses-feature android:name="android.hardware.camera" /> -->
 
@@ -56,6 +57,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="frizzell.flores.polaroidxp.MainActivity" />
         </activity>
+
         <activity
             android:name=".FullscreenImageActivity"
             android:label="@string/title_activity_fullscreen_image"
@@ -74,7 +76,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
-
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4c673e6958b5999669bb07d5b8e84b5e8c87cd5e" />
     </application>
 
 </manifest>
