@@ -72,6 +72,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             //TODO fix this, either reorder here, or only add jpeg files to the File [] gallerylist
         }
         else{
+            Log.e("Glide","image name: " + image.getAbsolutePath());
             Glide.with(this.myView).load(image).into(viewHolder.img);
         }
 

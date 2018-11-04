@@ -14,6 +14,11 @@
     <string name="action_gallery_select_all">Select All</string>
     <string name="action_gallery_decode_selected">Shake Selected Images</string>
 
+    <!--File Paths-->
+    <string name="mainImagesFolder">polaroidXP</string>
+    <string name="jpegImagesFolder">polaroidXP/JpegImages</string>
+    <string name="tiffImagesFolder">polaroidXP/TiffImages</string>
+
     <!--Internal Page-->
     <string name="default_caption">Default Caption</string>
 

@@ -17,11 +17,13 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("Fullscreen", "Creating activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen_image);
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 
         File passedImage = (File) getIntent().getExtras().get("ImageFile");
+        Log.e("fullscreen","File Name Passed: " + passedImage.getAbsolutePath());
         if(passedImage.exists()){
             Log.e("Fullscreen","Image received");
             try{
@@ -39,6 +41,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     matrix.postRotate(270);
                     Log.d("EXIF", "Exif: " + orientation);
                 }
+                Log.e("fullscreen","Trying to make bitmap to display");
                 Bitmap bitmapSelectedImage = BitmapFactory.decodeFile(passedImage.getAbsolutePath());
                 bitmapSelectedImage = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
                 mImageView.setImageBitmap(bitmapSelectedImage);

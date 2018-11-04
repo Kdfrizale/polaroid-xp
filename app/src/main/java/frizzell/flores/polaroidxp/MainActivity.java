@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, GalleryActivity.class));
             }
         });
-
+        Log.e("Main", "before permission check");
         Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
             @Override
             public void onGranted() {
@@ -93,9 +93,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        File folderForImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "polaroidXP");
+        Log.e("Main", "after permission check");
+        File folderForImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.mainImagesFolder));
         if (!folderForImages.exists()) {
             boolean successTemp = folderForImages.mkdirs();
+        }
+        File folderForTiffImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.tiffImagesFolder));
+        if (!folderForTiffImages.exists()) {
+            boolean successTempTiff = folderForTiffImages.mkdirs();
+        }
+        File folderForJpegImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.jpegImagesFolder));
+        if (!folderForJpegImages.exists()) {
+            boolean successTempJpeg = folderForJpegImages.mkdirs();
         }
 
 

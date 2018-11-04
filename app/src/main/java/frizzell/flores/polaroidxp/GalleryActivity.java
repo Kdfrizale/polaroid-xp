@@ -109,25 +109,6 @@ public class GalleryActivity extends AppCompatActivity {
         return file;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle savingInstanceState){
-        super.onSaveInstanceState(savingInstanceState);
-        Log.e("GalleySave", "saving state info");
-        savingInstanceState.putParcelable("classname.recycler.layout", mRecyclerView.getLayoutManager().onSaveInstanceState());
-
-    }
-
-    @Override
-    protected  void onRestoreInstanceState(Bundle savedInstanceState){
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.e("GalleyRestore", "restoring state info");
-        if(savedInstanceState != null)
-        {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("classname.recycler.layout");
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-        }
-
-    }
 }
 
 
