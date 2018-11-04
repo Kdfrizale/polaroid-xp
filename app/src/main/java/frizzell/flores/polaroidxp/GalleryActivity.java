@@ -2,9 +2,11 @@ package frizzell.flores.polaroidxp;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,19 +15,21 @@ import java.io.File;
 import java.util.Vector;
 
 public class GalleryActivity extends AppCompatActivity {
+    RecyclerView mRecyclerView;
+    static int mCurrentVisiblePosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_layout);
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.imagegallery);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView = (RecyclerView)findViewById(R.id.imagegallery);
+        mRecyclerView.setHasFixedSize(true);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemViewCacheSize(20);
-        recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setItemViewCacheSize(20);
+        mRecyclerView.setDrawingCacheEnabled(true);
+        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         //TODO add storage permission check here
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
@@ -33,7 +37,22 @@ public class GalleryActivity extends AppCompatActivity {
         files = convertTiffsToJpeg(files);
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.e("Restoring visition", "Position is: " + mCurrentVisiblePosition);
+        ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mCurrentVisiblePosition);
+        mCurrentVisiblePosition = 0;
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mCurrentVisiblePosition = ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        Log.e("Save visible position", "Position is: " + mCurrentVisiblePosition);
     }
 
     @Override
@@ -88,6 +107,26 @@ public class GalleryActivity extends AppCompatActivity {
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
         File file[] = storageDir.listFiles();
         return file;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savingInstanceState){
+        super.onSaveInstanceState(savingInstanceState);
+        Log.e("GalleySave", "saving state info");
+        savingInstanceState.putParcelable("classname.recycler.layout", mRecyclerView.getLayoutManager().onSaveInstanceState());
+
+    }
+
+    @Override
+    protected  void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.e("GalleyRestore", "restoring state info");
+        if(savedInstanceState != null)
+        {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("classname.recycler.layout");
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
     }
 }
 
