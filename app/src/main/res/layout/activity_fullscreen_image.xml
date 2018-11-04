@@ -5,10 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FullscreenImageActivity">
+
     <ImageView
         android:id="@+id/fullScreenImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:background="@android:color/background_dark"
+        android:scaleType="centerInside"
+        app:srcCompat="@android:color/background_dark" />
 
 </android.support.constraint.ConstraintLayout>
