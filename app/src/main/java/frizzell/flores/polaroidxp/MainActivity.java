@@ -205,8 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     if(mWorkingImageFile.exists()){
                             Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
-                            File tempTiffImage = StorageHelper.createTiffFromJpeg(mWorkingImageFile.getName(),getString(R.string.tiffImagesFolder));
-                            TiffConverter.convertJpgTiff(mWorkingImageFile.toString(), tempTiffImage.toString(), null, null);
+                            Boolean tiffCreated = StorageHelper.createTiffFromJpeg(getString(R.string.tiffImagesFolder),mWorkingImageFile);
                     }
                 }
         }

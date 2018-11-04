@@ -3,6 +3,8 @@ package frizzell.flores.polaroidxp;
 import android.os.Environment;
 import android.util.Log;
 
+import org.beyka.tiffbitmapfactory.TiffConverter;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -26,24 +28,13 @@ public class StorageHelper {
         return null;
     }
 
-    public static File createImageFile(String parentDirectory, String filename, String fileSuffix) throws IOException {
+    public static boolean createTiffFromJpeg(String parentDirectory, File jpegFile){
         if(isExternalStorageWritable()){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
-            storageDir.mkdirs();
-
-            return File.createTempFile(filename,fileSuffix,storageDir);
+            File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
+            return TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), null, null);
         }
-        return null;
-    }
-
-    public static File createTiffFromJpeg(String jpegFileName, String parentDirectory){
-        if(isExternalStorageWritable()){
-            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
-            return new File(storageDir, jpegFileName + ".tif");
-
-            //return File.createTempFile(filename,fileSuffix,storageDir);
-        }
-        return null;
+        return false;
     }
 
 }
