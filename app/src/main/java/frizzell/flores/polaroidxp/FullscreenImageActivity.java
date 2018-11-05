@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.beyka.tiffbitmapfactory.Orientation;
 import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
 
 import java.io.File;
@@ -21,6 +22,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
     ImageView mImageView;
     File mTiffImage;
+    File mPassedJpegImage;
     Bitmap mImageBitmap;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -40,7 +42,9 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
             @Override
             public void onDoubleClick() {
-                mImageBitmap = getLayerOfTiff(mTiffImage,0);
+                Bitmap bitmapSelectedImage = getLayerOfTiff(mTiffImage,0);
+                Matrix matrix = getOrientationMatrix(mPassedJpegImage.getAbsolutePath());
+                mImageBitmap = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
                 setmImageView(mImageBitmap);
             }
 
@@ -48,6 +52,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         //Async Task can go here|| Start
         File passedImage = (File) getIntent().getExtras().get("ImageFile");
+        mPassedJpegImage = passedImage;//TODO maybe switch all these passedImages to the member variable one
         Log.e("fullscreen","File Name Passed: " + passedImage.getAbsolutePath());
         if(passedImage.exists()){
             Log.e("Fullscreen","Image received");
