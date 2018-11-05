@@ -46,10 +46,14 @@ public class FullscreenImageActivity extends AppCompatActivity {
 //                mImageBitmap = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
                 setmImageView(mImageBitmap);
             }
+            @Override
+            public void onSwipeRight() {
+                //#Useful
+            }
 
         });
 
-        //Async Task can go here|| Start
+        //Async Task can go here|| Async Start
         File passedImage = (File) getIntent().getExtras().get("ImageFile");
         Log.e("fullscreen","File Name Passed: " + passedImage.getAbsolutePath());
         if(passedImage.exists()){
@@ -66,6 +70,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
             //Bitmap bitmapSelectedImage = BitmapFactory.decodeFile(passedImage.getAbsolutePath());
             mImageBitmap = getLayerOfTiff(mTiffImage,1);//TODO add a constant int for Filter and base image
             setmImageView(mImageBitmap);
+            //Async End
         }
         else{
             Log.e("Fullscreen","File did not exist");
@@ -73,7 +78,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
     }
 
     //TODO change to javadoc
-    //layer =0 for base image, layer =1 for filter
+    //Q: Is this just meant for filtered version/ unfiltered version, or does it correspond to specific layers (Means we are gonna need mulitple layers)
+    //layer = 0 for base image, layer = 1 for filter
     private Bitmap getLayerOfTiff(File tiffImage, int layer){
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         TiffBitmapFactory.decodeFile(tiffImage, options);
