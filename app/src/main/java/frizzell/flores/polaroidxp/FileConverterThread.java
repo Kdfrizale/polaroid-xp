@@ -14,8 +14,10 @@ public class FileConverterThread extends Thread{
     }
 
     public void run(){
-                Log.e("FIle CONVERTED", fileToConvert.toString());
-                TiffConverter.convertTiffJpg(fileToConvert.toString(), fileToConvert.toString() + ".jpg", null, null);
+        //Async Task can go here|| Async Start
+        Log.e("FIle CONVERTED", fileToConvert.toString());
+        TiffConverter.convertTiffJpg(fileToConvert.toString(), fileToConvert.toString() + ".jpg", null, null);
+        // Async End
 
     }
 }

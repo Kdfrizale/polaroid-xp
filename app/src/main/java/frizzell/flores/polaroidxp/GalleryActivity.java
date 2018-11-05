@@ -74,12 +74,13 @@ public class GalleryActivity extends AppCompatActivity {
                 return true;
             case R.id.action_gallery_select_all:
                 //TODO create action to select all images,
-                //TODO note this is just a tempory crash me button to test our debugging and crash reporting services
+                //TODO note this is just a temporary crash me button to test our debugging and crash reporting services
                 throw new RuntimeException("This was a test crash");
                 //return true;
             case R.id.action_gallery_decode_selected:
                 //TODO implement decode function
-                //TODO note this is just a tempory crash me button to test our debugging and crash reporting services
+                //TODO note this is just a temporary crash me button to test our debugging and crash reporting services
+                //TODO when implemented, multi-Async tasks will be absolutely necessary for mass picture conversions
                 Crashlytics.getInstance().crash();
                 return true;
             default:
@@ -102,6 +103,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
         }
         //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds) but in normal use there is almost no delay
+        //TODO implement with the use of multi-Async tasks.
         for(FileConverterThread thread : convertorThreads){
             thread.start();
         }
