@@ -60,6 +60,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onDoubleClick() {
                 Intent fullscreenImageIntent = new Intent(context, FullscreenImageActivity.class);
+                //TODO we can save bandwidth by changing this to a string file name as that's all we are using
                 fullscreenImageIntent.putExtra("ImageFile", image);
                 context.startActivity(fullscreenImageIntent);
             }
