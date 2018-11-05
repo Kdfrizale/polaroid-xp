@@ -53,7 +53,6 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onLongClick(){
                 Log.e("TOUCH","LONG TOUCH");
-                //TODO the myView goes out of scope and results in a crash
                 Snackbar.make(viewHolder.img, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -66,15 +65,8 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             }
 
         });
-
-        if(image.toString().endsWith(".tif") || image.toString().endsWith(".TIF")){
-            //Ignore tiff images in directory
-            //TODO fix this, either reorder here, or only add jpeg files to the File [] gallerylist
-        }
-        else{
             Log.e("Glide","image name: " + image.getAbsolutePath());
             Glide.with(this.myView).load(image).into(viewHolder.img);
-        }
 
     }
 

@@ -35,10 +35,10 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        //TODO add storage permission check here
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        File files[] = storageDir.listFiles();
-        files = convertTiffsToJpeg(files);
+        //File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
+        //File files[] = storageDir.listFiles();
+        File files[] = StorageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
+        //files = convertTiffsToJpeg(files);
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
         mRecyclerView.setAdapter(adapter);
@@ -47,7 +47,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        Log.e("Restoring visition", "Position is: " + mCurrentVisiblePosition);
+        Log.e("Restoring position", "Position is: " + mCurrentVisiblePosition);
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mCurrentVisiblePosition);
         mCurrentVisiblePosition = 0;
     }
