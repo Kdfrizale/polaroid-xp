@@ -3,6 +3,8 @@ package frizzell.flores.polaroidxp;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 
@@ -42,7 +44,9 @@ public class StorageHelper {
         if(isExternalStorageWritable()){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
-            if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), null, null)){
+            TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
+            options.imageDescription = Integer.toString(getImageOrientation(jpegFile.getAbsolutePath()));
+            if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), options, null)){
                 return tempTiff;
             }
         }
@@ -53,8 +57,50 @@ public class StorageHelper {
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         //options.compressionScheme = CompressionScheme.COMPRESSION_LZW;
+        options.imageDescription = Integer.toString(getImageOrientation(jpegFilterFilePath));
         return TiffSaver.appendBitmap(tiffFilePath, filter, options);
 
+    }
+
+    private static int getImageOrientation(String filePath){
+        try{
+            ExifInterface exif = new ExifInterface(filePath);
+            return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
+        }catch (Exception e){
+            Log.e("Fullscreen Exif", "Error, returning default orientation matrix");
+            return 1;
+        }
+    }
+
+    public static Matrix getOrientationMatrix(String filePath){
+        int orientation = getImageOrientation(filePath);
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+            Log.d("EXIF", "Exif: " + orientation);
+        }
+        return matrix;
+    }
+
+    public static Matrix getOrientationMatrix(int orientation){
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+            Log.d("EXIF", "Exif: " + orientation);
+        }
+        return matrix;
     }
 
     //TODO example of reading multi page tiff

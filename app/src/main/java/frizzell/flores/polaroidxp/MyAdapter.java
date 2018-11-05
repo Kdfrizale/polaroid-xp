@@ -65,7 +65,6 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 fullscreenImageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(fullscreenImageIntent);
             }
-
         });
             Log.e("Glide","image name: " + image.getAbsolutePath());
             Glide.with(this.myView).load(image).into(viewHolder.img);
