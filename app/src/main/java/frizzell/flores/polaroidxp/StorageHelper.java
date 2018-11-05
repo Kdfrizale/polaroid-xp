@@ -46,7 +46,6 @@ public class StorageHelper {
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
             TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
             options.imageDescription = Integer.toString(getImageOrientation(jpegFile.getAbsolutePath()));
-            options.software = "Some copyright";
             if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), options, null)){
                 return tempTiff;
             }
@@ -58,8 +57,7 @@ public class StorageHelper {
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         //options.compressionScheme = CompressionScheme.COMPRESSION_LZW;
-        options.copyright = "Some copyright";
-        options.imageDescription = "fuckkkkkk";
+        options.imageDescription = Integer.toString(getImageOrientation(jpegFilterFilePath));
         return TiffSaver.appendBitmap(tiffFilePath, filter, options);
 
     }
@@ -76,18 +74,33 @@ public class StorageHelper {
 
     public static Matrix getOrientationMatrix(String filePath){
         int orientation = getImageOrientation(filePath);
-            Matrix matrix = new Matrix();
-            if (orientation == 6) {
-                matrix.postRotate(90);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 3) {
-                matrix.postRotate(180);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 8) {
-                matrix.postRotate(270);
-                Log.d("EXIF", "Exif: " + orientation);
-            }
-            return matrix;
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+            Log.d("EXIF", "Exif: " + orientation);
+        }
+        return matrix;
+    }
+
+    public static Matrix getOrientationMatrix(int orientation){
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+            Log.d("EXIF", "Exif: " + orientation);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+            Log.d("EXIF", "Exif: " + orientation);
+        }
+        return matrix;
     }
 
     //TODO example of reading multi page tiff

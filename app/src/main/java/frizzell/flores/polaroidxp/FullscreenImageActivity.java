@@ -22,7 +22,6 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
     ImageView mImageView;
     File mTiffImage;
-    File mPassedJpegImage;
     Bitmap mImageBitmap;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -42,9 +41,9 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
             @Override
             public void onDoubleClick() {
-                Bitmap bitmapSelectedImage = getLayerOfTiff(mTiffImage,0);
-                Matrix matrix = StorageHelper.getOrientationMatrix(mPassedJpegImage.getAbsolutePath());
-                mImageBitmap = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
+                mImageBitmap = getLayerOfTiff(mTiffImage,0);
+//                Matrix matrix = StorageHelper.getOrientationMatrix(mPassedJpegImage.getAbsolutePath());
+//                mImageBitmap = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
                 setmImageView(mImageBitmap);
             }
 
@@ -52,7 +51,6 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         //Async Task can go here|| Start
         File passedImage = (File) getIntent().getExtras().get("ImageFile");
-        mPassedJpegImage = passedImage;//TODO maybe switch all these passedImages to the member variable one
         Log.e("fullscreen","File Name Passed: " + passedImage.getAbsolutePath());
         if(passedImage.exists()){
             Log.e("Fullscreen","Image received");
@@ -63,10 +61,10 @@ public class FullscreenImageActivity extends AppCompatActivity {
             mTiffImage = new File(storageDir, passedImage.getName() + ".tif");
 
 
-            Bitmap bitmapSelectedImage = getLayerOfTiff(mTiffImage,1);//TODO add a constant int for Filter and base image
+            //Bitmap bitmapSelectedImage = getLayerOfTiff(mTiffImage,1);//TODO add a constant int for Filter and base image
 
             //Bitmap bitmapSelectedImage = BitmapFactory.decodeFile(passedImage.getAbsolutePath());
-            mImageBitmap = Bitmap.createBitmap(bitmapSelectedImage,0,0,bitmapSelectedImage.getWidth(),bitmapSelectedImage.getHeight(),matrix,true);
+            mImageBitmap = getLayerOfTiff(mTiffImage,1);//TODO add a constant int for Filter and base image
             setmImageView(mImageBitmap);
         }
         else{
@@ -81,14 +79,15 @@ public class FullscreenImageActivity extends AppCompatActivity {
         TiffBitmapFactory.decodeFile(tiffImage, options);
         int dirCount = options.outDirectoryCount;
         Log.e("Tiff desc","iamge description: " + options.outImageDescription);
-        Log.e("Tiff desc","iamge software: " + options.outSoftware);
-        Log.e("Tiff desc","iamge copyright: " + options.outCopyright);
+        Matrix matrix = StorageHelper.getOrientationMatrix(Integer.parseInt(options.outImageDescription));
         if(dirCount - 1 <= layer){
             options.inDirectoryNumber = layer;//0 is base image, 1 is filter
-            return TiffBitmapFactory.decodeFile(tiffImage,options);
+            Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
+            return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
         else{
-            return TiffBitmapFactory.decodeFile(tiffImage);
+            Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage);
+            return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
     }
 
