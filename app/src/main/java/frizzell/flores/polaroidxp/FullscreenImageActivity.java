@@ -22,6 +22,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fullscreen_image);
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 
+        //Async Task can go here|| Start
         File passedImage = (File) getIntent().getExtras().get("ImageFile");
         Log.e("fullscreen","File Name Passed: " + passedImage.getAbsolutePath());
         if(passedImage.exists()){

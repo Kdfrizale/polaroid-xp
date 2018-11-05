@@ -22,15 +22,18 @@
     <!--Internal Page-->
     <string name="default_caption">Default Caption</string>
 
+    <!--Settings Titles-->
     <string name="Picture_Border_Setting_Title">Polaroid Picture Border</string>
     <string name="Signed_Photo_Setting_Title">Photo Message</string>
     <string name="Notification_Setting_Title">Notifications</string>
     <string name="Support_Us_Setting_Title">"                                  Support Us"</string>
 
+    <!--Settings Descriptions-->
     <string name="Border_Setting_Description">Set the Polaroid Border on pictures</string>
     <string name="Signature_Setting_Description">Enter text above for a message on photos</string>
     <string name="Notification_Setting_Description">Notifications are sent once a day if a photo is left unfinished</string>
 
+    <!--Settings Keys-->
     <string name="Picture_Border_Key">Border</string>
     <string name="Signed_Photo_Key">Message</string>
     <string name="Notification_Setting_Key">Notification</string>
