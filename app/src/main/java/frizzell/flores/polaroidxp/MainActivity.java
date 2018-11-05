@@ -204,8 +204,11 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CODE_IMAGE_CAPTURE:
                 if (resultCode == Activity.RESULT_OK) {
                     if(mWorkingImageFile.exists()){
-                            Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
-                            Boolean tiffCreated = StorageHelper.createTiffFromJpeg(getString(R.string.tiffImagesFolder),mWorkingImageFile);
+                        Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
+                        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
+                        File filter = new File(storageDir,"1.jpg");
+                        Boolean tiffCreated = StorageHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter.getAbsolutePath());
+
                     }
                 }
         }

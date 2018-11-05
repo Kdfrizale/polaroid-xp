@@ -1,11 +1,14 @@
 package frizzell.flores.polaroidxp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
 import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
 import org.beyka.tiffbitmapfactory.TiffConverter;
+import org.beyka.tiffbitmapfactory.TiffSaver;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +33,28 @@ public class StorageHelper {
         return null;
     }
 
-    public static boolean createTiffFromJpeg(String parentDirectory, File jpegFile){
+    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, String jpegFilterFilePath){
+        File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile);
+        return appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath);
+    }
+
+    public static File createTiffFromJpeg(String parentDirectory, File jpegFile){
         if(isExternalStorageWritable()){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
-            return TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), null, null);
+            if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), null, null)){
+                return tempTiff;
+            }
         }
-        return false;
+        return null;
+    }
+
+    public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath){
+        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
+        TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
+        //options.compressionScheme = CompressionScheme.COMPRESSION_LZW;
+        return TiffSaver.appendBitmap(tiffFilePath, filter, options);
+
     }
 
     //TODO example of reading multi page tiff

@@ -18,6 +18,7 @@
     <string name="mainImagesFolder">polaroidXP</string>
     <string name="jpegImagesFolder">polaroidXP/JpegImages</string>
     <string name="tiffImagesFolder">polaroidXP/TiffImages</string>
+    <string name="filterImagesFolder">polaroidXP/FilterImages</string>
 
     <!--Internal Page-->
     <string name="default_caption">Default Caption</string>
