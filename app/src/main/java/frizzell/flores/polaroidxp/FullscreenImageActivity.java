@@ -78,13 +78,13 @@ public class FullscreenImageActivity extends AppCompatActivity {
     }
 
     //TODO change to javadoc
-    //Q: Is this just meant for filtered version/ unfiltered version, or does it correspond to specific layers (Means we are gonna need mulitple layers)
+    //Q: Is this just meant for filtered version/ unfiltered version, or does it correspond to specific layers (Means we are gonna need multiple layers)
     //layer = 0 for base image, layer = 1 for filter
     private Bitmap getLayerOfTiff(File tiffImage, int layer){
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         TiffBitmapFactory.decodeFile(tiffImage, options);
         int dirCount = options.outDirectoryCount;
-        Log.e("Tiff desc","iamge description: " + options.outImageDescription);
+        Log.e("Tiff desc","image description: " + options.outImageDescription);
         Matrix matrix = StorageHelper.getOrientationMatrix(Integer.parseInt(options.outImageDescription));
         if(dirCount - 1 <= layer){
             options.inDirectoryNumber = layer;//0 is base image, 1 is filter
