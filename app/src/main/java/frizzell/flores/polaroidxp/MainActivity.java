@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu_options, menu);
         return true;
     }
@@ -158,24 +157,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    //Saves the value in the bundle for next time app is accessed
-//    @Override
-//    protected void onSaveInstanceState(Bundle savingInstanceState){
-//        super.onSaveInstanceState(savingInstanceState);
-//
-//        savingInstanceState.putBoolean(saved_bundle_picture_border_state, picture_border_state);
-//        savingInstanceState.putString(saved_bundle_picture_custom_message, picture_custom_message);
-//    }
 
-//    //Restores the value in the bundle for the next time app is accessed. Just in case app is force closed.
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState){
-//        super.onRestoreInstanceState(savedInstanceState);
-//        if(savedInstanceState != null){
-//            picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
-//            picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
-//        }
-//    }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
