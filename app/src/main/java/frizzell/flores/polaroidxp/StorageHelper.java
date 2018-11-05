@@ -1,5 +1,6 @@
 package frizzell.flores.polaroidxp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,10 +18,34 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 public class StorageHelper {
+
+    final static int TIFF_BASE_LAYER = 0;
+    final static int TIFF_FILTER_LAYER =1;
+
     public static boolean isExternalStorageWritable() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    public static boolean createDirectoryTrees(Context context) {
+        if (createDirectory(context.getString(R.string.mainImagesFolder))) {
+            if (createDirectory(context.getString(R.string.tiffImagesFolder))) {
+                if(createDirectory(context.getString(R.string.jpegImagesFolder))){
+                    return createDirectory(context.getString(R.string.filterImagesFolder));
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean createDirectory(String directoryName){
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), directoryName);
+        if (!folder.exists()) {
+            return folder.mkdirs();
+        }
+        return false;
     }
 
     public static File createImageFile(String parentDirectory, String fileSuffix) throws IOException {
@@ -107,32 +132,61 @@ public class StorageHelper {
         return matrix;
     }
 
-    //TODO example of reading multi page tiff
-//    public static boolean createTiffFromJpeg(String parentDirectory, File jpegFile){
-//        if(isExternalStorageWritable()){
-//            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
-//            File tempTiff = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "multipage_tif_example.tif");
-//            TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
-//            TiffBitmapFactory.decodeFile(tempTiff, options);
-//            int dirCount = options.outDirectoryCount;
-//            //Read and process all images in file
-//            for (int i = 0; i < dirCount; i++) {
-//                options.inDirectoryNumber = i;
-//                TiffBitmapFactory.decodeFile(tempTiff, options);
-//                int curDir = options.outCurDirectoryNumber;
-//            }
-//
-//
-//
-//
-//            return TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), null, null);
-//        }
-//        return false;
-//    }
+    //TODO change to javadoc
+    //Q: Is this just meant for filtered version/ unfiltered version, or does it correspond to specific layers (Means we are gonna need multiple layers)
+    //A: it will respond if the the layer give is too high(doesn't exist) in which case it gives base Image
+    //layer = 0 for base image, layer = 1 for filter
+    public static Bitmap getLayerOfTiff(File tiffImage, int layer){
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        TiffBitmapFactory.decodeFile(tiffImage, options);
+        int dirCount = options.outDirectoryCount;
+        Log.e("Tiff desc","image description: " + options.outImageDescription);
+        Matrix matrix = StorageHelper.getOrientationMatrix(Integer.parseInt(options.outImageDescription));
+        if(dirCount - 1 <= layer){
+            options.inDirectoryNumber = layer;//0 is base image, 1 is filter
+            Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
+            return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
+        }
+        else{
+            Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage);
+            return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
+        }
+    }
 
     public static File[] getImagesInFolder(String parentDirectory){
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
         return storageDir.listFiles();
+    }
+
+    //TODO analyze why thread.start() join() causes a deprecated warning?? for now ignore
+    @SuppressWarnings("deprecation")
+    private File[] convertTiffsToJpeg(File[] files){
+        Vector<FileConverterThread> convertorThreads = new Vector<FileConverterThread>();
+        for(File file : files){
+            if((file.toString().endsWith(".tif") || file.toString().endsWith(".TIF"))) {
+                File tempFile = new File(file.toString() + ".jpg");
+                if(!tempFile.exists() ){
+                    convertorThreads.add(new FileConverterThread(file));
+                    //Log.e("FIle CONVERTED", file.toString());
+                    //TiffConverter.convertTiffJpg(file.toString(), file.toString() + ".jpg", null, null);
+                }
+            }
+        }
+        //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds) but in normal use there is almost no delay
+        //TODO implement with the use of multi-Async tasks.
+        for(FileConverterThread thread : convertorThreads){
+            thread.start();
+        }
+        for(FileConverterThread thread : convertorThreads){
+            try{
+                thread.join();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
+        File file[] = storageDir.listFiles();
+        return file;
     }
 
 }

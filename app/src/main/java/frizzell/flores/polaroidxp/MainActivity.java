@@ -25,8 +25,6 @@ import android.widget.TextView;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
-import org.beyka.tiffbitmapfactory.TiffConverter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,12 +74,9 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab_gallery = findViewById(R.id.floatingActionButtonGallery);
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                //ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-                //PermissionsHelper.askForPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE,REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-            }
-        });
+            public void onClick(View view) { startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+            }});
+
         Log.e("Main", "before permission check");
         Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
             @Override
@@ -97,20 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.e("Main", "after permission check");
-        File folderForImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.mainImagesFolder));
-        if (!folderForImages.exists()) {
-            boolean successTemp = folderForImages.mkdirs();
-        }
-        File folderForTiffImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.tiffImagesFolder));
-        if (!folderForTiffImages.exists()) {
-            boolean successTempTiff = folderForTiffImages.mkdirs();
-        }
-        File folderForJpegImages = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.jpegImagesFolder));
-        if (!folderForJpegImages.exists()) {
-            boolean successTempJpeg = folderForJpegImages.mkdirs();
-        }
-
+        StorageHelper.createDirectoryTrees(this);
 
 //        //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
 //        //also to save the value of the photo path just in case.
@@ -157,12 +139,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            //File photoFile;
             try {
                 mWorkingImageFile = StorageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
             } catch (IOException ex) {
@@ -176,7 +155,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(takePictureIntent, REQUEST_CODE_IMAGE_CAPTURE);
             }
         }
-        Snackbar.make(findViewById(R.id.polaroid_coorLayout), "ERROR: No Camera App found", Snackbar.LENGTH_LONG).show();
+        else{
+            Snackbar.make(findViewById(R.id.polaroid_coorLayout), "ERROR: No Camera App found", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override

@@ -1,12 +1,9 @@
 package frizzell.flores.polaroidxp;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +12,6 @@ import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
-import java.util.Vector;
 
 public class GalleryActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
@@ -23,7 +19,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());//TODO move this to the main Activity
         setContentView(R.layout.gallery_layout);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.imagegallery);
@@ -35,10 +31,7 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        //File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        //File files[] = storageDir.listFiles();
         File files[] = StorageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
-        //files = convertTiffsToJpeg(files);
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
         mRecyclerView.setAdapter(adapter);
@@ -47,7 +40,6 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        Log.e("Restoring position", "Position is: " + mCurrentVisiblePosition);
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mCurrentVisiblePosition);
         mCurrentVisiblePosition = 0;
     }
@@ -56,7 +48,6 @@ public class GalleryActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         mCurrentVisiblePosition = ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-        Log.e("Save visible position", "Position is: " + mCurrentVisiblePosition);
     }
 
     @Override
@@ -87,38 +78,6 @@ public class GalleryActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    //TODO analyze why thread.start() join() causes a deprecated warning?? for now ignore
-    @SuppressWarnings("deprecation")
-    private File[] convertTiffsToJpeg(File[] files){
-        Vector<FileConverterThread> convertorThreads = new Vector<FileConverterThread>();
-        for(File file : files){
-            if((file.toString().endsWith(".tif") || file.toString().endsWith(".TIF"))) {
-                File tempFile = new File(file.toString() + ".jpg");
-                if(!tempFile.exists() ){
-                    convertorThreads.add(new FileConverterThread(file));
-                    //Log.e("FIle CONVERTED", file.toString());
-                    //TiffConverter.convertTiffJpg(file.toString(), file.toString() + ".jpg", null, null);
-                }
-            }
-        }
-        //TODO add a popup to tell the user that the images are loading (50 conversions take 14.55 seconds) but in normal use there is almost no delay
-        //TODO implement with the use of multi-Async tasks.
-        for(FileConverterThread thread : convertorThreads){
-            thread.start();
-        }
-        for(FileConverterThread thread : convertorThreads){
-            try{
-                thread.join();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP");
-        File file[] = storageDir.listFiles();
-        return file;
-    }
-
 }
 
 

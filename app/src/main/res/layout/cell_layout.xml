@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
-        android:id="@+id/img"
+        android:id="@+id/image_cell"
         android:adjustViewBounds="true"
         android:padding="2dp"
         android:layout_height="200dp"
