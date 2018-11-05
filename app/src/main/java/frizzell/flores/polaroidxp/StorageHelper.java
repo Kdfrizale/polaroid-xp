@@ -8,6 +8,7 @@ import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 
+import org.beyka.tiffbitmapfactory.CompressionScheme;
 import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
 import org.beyka.tiffbitmapfactory.TiffConverter;
 import org.beyka.tiffbitmapfactory.TiffSaver;
@@ -45,6 +46,8 @@ public class StorageHelper {
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
             TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
+            //options.compressionScheme = CompressionScheme.LZW;
+            options.compressionScheme = CompressionScheme.JPEG;
             options.imageDescription = Integer.toString(getImageOrientation(jpegFile.getAbsolutePath()));
             if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), options, null)){
                 return tempTiff;
@@ -56,7 +59,8 @@ public class StorageHelper {
     public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath){
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
-        //options.compressionScheme = CompressionScheme.COMPRESSION_LZW;
+        //options.compressionScheme = CompressionScheme.LZW;
+        options.compressionScheme = CompressionScheme.JPEG;
         options.imageDescription = Integer.toString(getImageOrientation(jpegFilterFilePath));
         return TiffSaver.appendBitmap(tiffFilePath, filter, options);
 
