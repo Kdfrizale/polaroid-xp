@@ -1,4 +1,4 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,8 @@ import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
+import frizzell.flores.polaroidxp.activity.MyAdapter;
+import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import io.fabric.sdk.android.Fabric;
 

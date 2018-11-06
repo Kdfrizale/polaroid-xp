@@ -7,7 +7,7 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
-    tools:context="frizzell.flores.polaroidxp.GalleryActivity">
+    tools:context="frizzell.flores.polaroidxp.activity.GalleryActivity">
 
 
     <android.support.v7.widget.RecyclerView

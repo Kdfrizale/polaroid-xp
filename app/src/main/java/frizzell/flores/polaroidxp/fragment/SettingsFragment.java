@@ -1,7 +1,9 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.fragment;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import frizzell.flores.polaroidxp.R;
 
 public class SettingsFragment extends PreferenceFragment{
     @Override

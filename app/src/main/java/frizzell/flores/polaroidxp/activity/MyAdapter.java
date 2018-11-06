@@ -1,4 +1,4 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+
+import frizzell.flores.polaroidxp.OnGestureTouchListener;
+import frizzell.flores.polaroidxp.R;
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private File[] mGalleryList;

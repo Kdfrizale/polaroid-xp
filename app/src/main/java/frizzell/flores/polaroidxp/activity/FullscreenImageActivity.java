@@ -1,4 +1,4 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import java.io.File;
 
+import frizzell.flores.polaroidxp.OnGestureTouchListener;
+import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity {

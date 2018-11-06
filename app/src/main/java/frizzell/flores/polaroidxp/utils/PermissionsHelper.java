@@ -1,4 +1,4 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.utils;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;

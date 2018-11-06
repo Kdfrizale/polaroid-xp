@@ -1,4 +1,4 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import frizzell.flores.polaroidxp.utils.PermissionsHelper;
+import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;

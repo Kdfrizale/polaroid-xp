@@ -1,8 +1,10 @@
-package frizzell.flores.polaroidxp;
+package frizzell.flores.polaroidxp.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+
+import frizzell.flores.polaroidxp.fragment.SettingsFragment;
 
 public class SettingsPageActivity extends AppCompatActivity {
   @Override
