@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
+
+import frizzell.flores.polaroidxp.utils.ImageHelper;
 import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
@@ -31,7 +33,7 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        File files[] = StorageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
+        File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
 
         MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
         mRecyclerView.setAdapter(adapter);

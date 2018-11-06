@@ -1,11 +1,7 @@
 package frizzell.flores.polaroidxp;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.beyka.tiffbitmapfactory.Orientation;
-import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
-
 import java.io.File;
+
+import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity {
 
@@ -41,7 +36,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
             }
             @Override
             public void onDoubleClick() {
-                changeImage(mTiffImage,StorageHelper.TIFF_BASE_LAYER);
+                changeImage(mTiffImage,TiffHelper.TIFF_BASE_LAYER);
             }
             @Override
             public void onSwipeRight() {
@@ -54,7 +49,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.tiffImagesFolder));
         File tempFile = new File(storageDir, passedImageName + ".tif");
 
-        changeImage(tempFile,StorageHelper.TIFF_FILTER_LAYER);
+        changeImage(tempFile,TiffHelper.TIFF_FILTER_LAYER);
         //Async End
 
     }
@@ -62,7 +57,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
     private boolean changeImage(File tiffImage, int tiffLayer){
         if(tiffImage.exists()){
             mTiffImage = tiffImage;
-            mImageBitmap = StorageHelper.getLayerOfTiff(mTiffImage,tiffLayer);
+            mImageBitmap = TiffHelper.getLayerOfTiff(mTiffImage,tiffLayer);
             setmImageView(mImageBitmap);
             return true;
         }

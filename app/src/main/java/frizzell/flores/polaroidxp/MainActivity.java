@@ -29,6 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import frizzell.flores.polaroidxp.utils.ImageHelper;
+import frizzell.flores.polaroidxp.utils.StorageHelper;
+import frizzell.flores.polaroidxp.utils.TiffHelper;
+
 
 public class MainActivity extends AppCompatActivity {
     //Processes values
@@ -128,9 +132,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsPageActivity.class));
                 return true;
-            case R.id.action_testsettings:
-                startActivity(new Intent(this, TestSettingsActivity.class));
-                return true;
             case R.id.action_gallery:
                 startActivity(new Intent(this, GalleryActivity.class));
                 return true;
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             try {
-                mWorkingImageFile = StorageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
+                mWorkingImageFile = ImageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
             } catch (IOException ex) {
                 Log.e("PolaroidXP", "IO exception", ex);
                 PermissionsHelper.askForPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");
-                        Boolean tiffCreated = StorageHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter.getAbsolutePath());
+                        Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter.getAbsolutePath());
 
                     }
                 }
