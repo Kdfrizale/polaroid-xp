@@ -37,7 +37,6 @@ import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 
 public class MainActivity extends AppCompatActivity {
-    //Processes values
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
 

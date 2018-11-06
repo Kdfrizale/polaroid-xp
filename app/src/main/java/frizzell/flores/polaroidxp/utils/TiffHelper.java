@@ -50,8 +50,10 @@ public class TiffHelper {
     //A: it will respond if the the layer give is too high(doesn't exist) in which case it gives base Image
     //layer = 0 for base image, layer = 1 for filter
     public static Bitmap getLayerOfTiff(File tiffImage, int layer){
+        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("getLayerOfTiff");
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         TiffBitmapFactory.decodeFile(tiffImage, options);
+        stopwatch.logStopwatch();
         int numberOfLayers = options.outDirectoryCount;
         Log.e("Tiff desc","image description: " + options.outImageDescription);
         //Log.e("Tiff desc","image orientation: " + options.outImageOrientation);
@@ -59,10 +61,12 @@ public class TiffHelper {
         if(layer <= numberOfLayers - 1){
             options.inDirectoryNumber = layer;//0 is base image, 1 is filter
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
+            stopwatch.logStopwatch();
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
         else{
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage);
+            stopwatch.logStopwatch();
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
     }
