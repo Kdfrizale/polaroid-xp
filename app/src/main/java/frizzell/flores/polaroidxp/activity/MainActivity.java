@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
         StorageHelper.createDirectoryTrees(this);
 
+
 //        //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
 //        //also to save the value of the photo path just in case.
 //        if(savedInstanceState != null){
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");
-                        Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter.getAbsolutePath());
+                        Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
 
                     }
                 }

@@ -1,5 +1,6 @@
 package frizzell.flores.polaroidxp.utils;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -12,35 +13,55 @@ import org.beyka.tiffbitmapfactory.TiffConverter;
 import org.beyka.tiffbitmapfactory.TiffSaver;
 
 import java.io.File;
+import java.util.Vector;
 
 public class TiffHelper {
     public final static int TIFF_BASE_LAYER = 0;
-    public final static int TIFF_FILTER_LAYER =1;
+    public final static int TIFF_FILTER_LAYER = 1;
 
-    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, String jpegFilterFilePath){
+    ///TODO concurrent Possibilities
+    //Creating TIFF, Bitmap filter generation can be concurrent, results in a 10% improvement (192 out of 2159milliseconds)
+    //Thread Creating tiff/appending filter after taking a picture, so the user can either take another picture quickly or navigate the menu
+    //Potentially create function to start caching the Tiff's bitmaps the user is most likely to open (e.g. the filter and base at the same time, the lataest photo they have taken, etc)
+
+    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFilePath){
+        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("CreateFilteredTiff");
         File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile);
-        return appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath);
+        stopwatch.logStopwatch("Created Based");
+        Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath.getAbsolutePath());
+        stopwatch.logStopwatch("Created Appenned Filter");
+        return result;
     }
 
     public static File createTiffFromJpeg(String parentDirectory, File jpegFile){
         if(StorageHelper.isExternalStorageWritable()){
+            Log.e("created tiff", "image is writable");
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
+            Log.e("created tiff", "File object was created");
             TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
             options.compressionScheme = CompressionScheme.JPEG;
-            options.imageDescription = Integer.toString(ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
-            if(TiffConverter.convertJpgTiff(jpegFile.toString(), tempTiff.toString(), options, null)){
+            ImageDescription tempDescrip =  new ImageDescription(false, ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
+            Log.e("created tiff", "image object was instantiated");
+            options.imageDescription = tempDescrip.encodeToString();
+            Log.e("created tiff", "trying to conver.....");
+            if(TiffConverter.convertJpgTiff(jpegFile.getAbsolutePath(), tempTiff.getAbsolutePath(), options, null)){
                 return tempTiff;
             }
         }
+        Log.e("Failed Tiff Conversion","Returning null file");
         return null;
     }
 
     public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath){
+        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
+        stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
+        options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFilePath));
         options.compressionScheme = CompressionScheme.JPEG;
-        options.imageDescription = Integer.toString(ImageHelper.getImageOrientation(jpegFilterFilePath));
+        ImageDescription tempDescrip =  new ImageDescription(false, ImageHelper.getImageOrientation(jpegFilterFilePath));
+        options.imageDescription = tempDescrip.encodeToString();
         return TiffSaver.appendBitmap(tiffFilePath, filter, options);
 
     }
@@ -50,18 +71,23 @@ public class TiffHelper {
     //A: it will respond if the the layer give is too high(doesn't exist) in which case it gives base Image
     //layer = 0 for base image, layer = 1 for filter
     public static Bitmap getLayerOfTiff(File tiffImage, int layer){
+        //Log.e("screen width", "Width in static!: " + Resources.getSystem().getDisplayMetrics().widthPixels);
+        //Log.e("screen width", "Width in static!: " + Resources.getSystem().getDisplayMetrics().heightPixels);
         LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("getLayerOfTiff");
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
         TiffBitmapFactory.decodeFile(tiffImage, options);
-        stopwatch.logStopwatch();
+        stopwatch.logStopwatch("get file metadata");
         int numberOfLayers = options.outDirectoryCount;
+        options.inJustDecodeBounds = false;
         Log.e("Tiff desc","image description: " + options.outImageDescription);
+        String [] imageProperties = options.outImageDescription.split(ImageDescription.delimiter);
         //Log.e("Tiff desc","image orientation: " + options.outImageOrientation);
-        Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(options.outImageDescription));
+        Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(imageProperties[ImageDescription.ORIENTATION]));
         if(layer <= numberOfLayers - 1){
-            options.inDirectoryNumber = layer;//0 is base image, 1 is filter
+            options.inDirectoryNumber = layer;//1 is base image, 0 is filter
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
-            stopwatch.logStopwatch();
+            stopwatch.logStopwatch("tiff bitmap returned");
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
         else{
@@ -70,6 +96,60 @@ public class TiffHelper {
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
     }
+
+    public String[] parseImageDescription(String imageDescription){
+        return imageDescription.split(",");
+    }
+
+    public static class ImageDescription {
+        public static final int DESCRIPTION =0;
+        public static final int FILTERED =1;
+        public static final int ORIENTATION =2;
+        private static final String delimiter = ",";
+
+        String mDescription = "";
+        Boolean mFiltered = false;
+        int mOrientation = 1;
+        public ImageDescription(Boolean filtered, int orientation){
+            this.mFiltered = filtered;
+            this.mOrientation = orientation;
+        }
+
+        public ImageDescription(Boolean filtered, int orientation, String description){
+            this.mFiltered = filtered;
+            this.mOrientation = orientation;
+            this.mDescription = description;
+        }
+
+        public String encodeToString(){
+            return mDescription + delimiter + String.valueOf(mFiltered) + delimiter + String.valueOf(mOrientation);
+        }
+
+        public String getmDescription() {
+            return mDescription;
+        }
+
+        public void setmDescription(String mDescription) {
+            this.mDescription = mDescription;
+        }
+
+        public Boolean getmFiltered() {
+            return mFiltered;
+        }
+
+        public void setmFiltered(Boolean mFiltered) {
+            this.mFiltered = mFiltered;
+        }
+
+        public int getmOrientation() {
+            return mOrientation;
+        }
+
+        public void setmOrientation(int mOrientation) {
+            this.mOrientation = mOrientation;
+        }
+    }
+
 
 //    //TODO analyze why thread.start() join() causes a deprecated warning?? for now ignore
 //    @SuppressWarnings("deprecation")

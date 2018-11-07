@@ -1,6 +1,7 @@
 package frizzell.flores.polaroidxp.activity;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;

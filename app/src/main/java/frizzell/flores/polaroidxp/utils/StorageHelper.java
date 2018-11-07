@@ -25,14 +25,13 @@ public class StorageHelper {
     }
 
     public static boolean createDirectoryTrees(Context context) {
-        if (createDirectory(context.getString(R.string.mainImagesFolder))) {
-            if (createDirectory(context.getString(R.string.tiffImagesFolder))) {
-                if(createDirectory(context.getString(R.string.jpegImagesFolder))){
-                    return createDirectory(context.getString(R.string.filterImagesFolder));
-                }
-            }
-        }
-        return false;
+        boolean result  = true;
+        result = createDirectory(context.getString(R.string.mainImagesFolder)) && result;
+        result = createDirectory(context.getString(R.string.tiffImagesFolder)) && result;
+        result = createDirectory(context.getString(R.string.jpegImagesFolder)) && result;
+        result = createDirectory(context.getString(R.string.filterImagesFolder)) && result;
+
+        return result;
     }
 
     public static boolean createDirectory(String directoryName){

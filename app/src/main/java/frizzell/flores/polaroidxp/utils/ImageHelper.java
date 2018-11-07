@@ -31,7 +31,7 @@ public class ImageHelper {
         return storageDir.listFiles();
     }
 
-    private static Orientation getOrientationEnum(int ordinal){
+    public static Orientation getOrientationEnum(int ordinal){
         switch(ordinal){
             case 1:
                 return Orientation.TOP_LEFT;

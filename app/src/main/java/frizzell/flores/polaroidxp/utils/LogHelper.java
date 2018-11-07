@@ -23,6 +23,9 @@ public class LogHelper {
         public void logStopwatch(){
             Log.e(mTitle,"The stopwatch for "+ mTitle +" ran for: "+ getElaspedTime() + " milliseconds");
         }
+        public void logStopwatch(String description){
+            Log.e(mTitle,"The stopwatch for "+ description +" ran for: "+ getElaspedTime() + " milliseconds");
+        }
 
     }
 }
