@@ -25,26 +25,22 @@ public class TiffHelper {
     //Potentially create function to start caching the Tiff's bitmaps the user is most likely to open (e.g. the filter and base at the same time, the lataest photo they have taken, etc)
 
     public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFilePath){
-        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("CreateFilteredTiff");
+        //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("CreateFilteredTiff");
         File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile);
-        stopwatch.logStopwatch("Created Based");
+        //stopwatch.logStopwatch("Created Based");
         Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath.getAbsolutePath());
-        stopwatch.logStopwatch("Created Appenned Filter");
+        //stopwatch.logStopwatch("Created Appenned Filter");
         return result;
     }
 
     public static File createTiffFromJpeg(String parentDirectory, File jpegFile){
         if(StorageHelper.isExternalStorageWritable()){
-            Log.e("created tiff", "image is writable");
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
-            Log.e("created tiff", "File object was created");
             TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
             options.compressionScheme = CompressionScheme.JPEG;
             ImageDescription tempDescrip =  new ImageDescription(false, ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
-            Log.e("created tiff", "image object was instantiated");
             options.imageDescription = tempDescrip.encodeToString();
-            Log.e("created tiff", "trying to conver.....");
             if(TiffConverter.convertJpgTiff(jpegFile.getAbsolutePath(), tempTiff.getAbsolutePath(), options, null)){
                 return tempTiff;
             }
@@ -54,9 +50,9 @@ public class TiffHelper {
     }
 
     public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath){
-        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
+        //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
-        stopwatch.logStopwatch("Finished Bitmap");
+        //stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFilePath));
         options.compressionScheme = CompressionScheme.JPEG;
@@ -73,11 +69,11 @@ public class TiffHelper {
     public static Bitmap getLayerOfTiff(File tiffImage, int layer){
         //Log.e("screen width", "Width in static!: " + Resources.getSystem().getDisplayMetrics().widthPixels);
         //Log.e("screen width", "Width in static!: " + Resources.getSystem().getDisplayMetrics().heightPixels);
-        LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("getLayerOfTiff");
+        //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("getLayerOfTiff");
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         options.inJustDecodeBounds = true;
         TiffBitmapFactory.decodeFile(tiffImage, options);
-        stopwatch.logStopwatch("get file metadata");
+        //stopwatch.logStopwatch("get file metadata");
         int numberOfLayers = options.outDirectoryCount;
         options.inJustDecodeBounds = false;
         Log.e("Tiff desc","image description: " + options.outImageDescription);
@@ -87,18 +83,14 @@ public class TiffHelper {
         if(layer <= numberOfLayers - 1){
             options.inDirectoryNumber = layer;//1 is base image, 0 is filter
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
-            stopwatch.logStopwatch("tiff bitmap returned");
+            //stopwatch.logStopwatch("tiff bitmap returned");
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
         else{
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage);
-            stopwatch.logStopwatch();
+            //stopwatch.logStopwatch();
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
-    }
-
-    public String[] parseImageDescription(String imageDescription){
-        return imageDescription.split(",");
     }
 
     public static class ImageDescription {
@@ -149,6 +141,9 @@ public class TiffHelper {
             this.mOrientation = mOrientation;
         }
     }
+
+
+
 
 
 //    //TODO analyze why thread.start() join() causes a deprecated warning?? for now ignore

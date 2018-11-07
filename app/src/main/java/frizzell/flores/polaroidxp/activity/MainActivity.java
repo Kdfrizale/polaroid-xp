@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
 import frizzell.flores.polaroidxp.utils.PermissionsHelper;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
@@ -172,8 +173,11 @@ public class MainActivity extends AppCompatActivity {
                     if(mWorkingImageFile.exists()){
                         Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
-                        File filter = new File(storageDir,"1.jpg");
-                        Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
+                        File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
+                        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
+                        SaveTiffTask createImageTask = new SaveTiffTask();
+                        createImageTask.execute(aParam);
+                        //Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
 
                     }
                 }
