@@ -93,6 +93,24 @@ public class TiffHelper {
         }
     }
 
+    public static boolean isFiltered(File tiffImage){
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        TiffBitmapFactory.decodeFile(tiffImage, options);
+
+        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+        ImageDescription imageDescrip = ImageDescription.decodeImageDescription(options.outImageDescription);
+        if(imageDescrip != null){
+            return  imageDescrip.mFiltered;
+        }
+        return false;
+    }
+
+
+
+
+
+
     public static class ImageDescription {
         public static final int DESCRIPTION =0;
         public static final int FILTERED =1;
@@ -115,6 +133,16 @@ public class TiffHelper {
 
         public String encodeToString(){
             return mDescription + delimiter + String.valueOf(mFiltered) + delimiter + String.valueOf(mOrientation);
+        }
+
+        public static ImageDescription decodeImageDescription(String description){
+            String[] properties = description.split(ImageDescription.delimiter);
+            if(properties.length == 3){
+                Boolean filterStatus = Boolean.valueOf(properties[FILTERED]);
+                int orientationStaus = Integer.valueOf(properties[ORIENTATION]);
+                return new ImageDescription(filterStatus,orientationStaus,properties[DESCRIPTION]);
+            }
+            return null;
         }
 
         public String getmDescription() {

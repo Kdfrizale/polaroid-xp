@@ -21,7 +21,7 @@ public class SaveTiffTask extends AsyncTask<SaveTiffTask.SaveTiffTaskParam, Inte
         File filterImageFile;
 
         public SaveTiffTaskParam(String parentDirectory, File baseImageFile, File filterImageFile){
-            this.parentDirectory =parentDirectory;
+            this.parentDirectory = parentDirectory;
             this.baseImageFile = baseImageFile;
             this.filterImageFile = filterImageFile;
         }

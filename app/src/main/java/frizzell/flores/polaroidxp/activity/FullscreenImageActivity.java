@@ -14,6 +14,7 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity {
@@ -39,7 +40,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
             }
             @Override
             public void onDoubleClick() {
-                changeImage(mTiffImage,TiffHelper.TIFF_BASE_LAYER);
+                unFilterImage(mTiffImage);
             }
             @Override
             public void onSwipeRight() {
@@ -51,17 +52,40 @@ public class FullscreenImageActivity extends AppCompatActivity {
         String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.tiffImagesFolder));
         File tempFile = new File(storageDir, passedImageName + ".tif");
+        if(!tempFile.exists()){
+            //TODO notify user that the image could not be found
+            //Log error
+            finish();
+        }
+        mTiffImage = tempFile;
+        //TODO read filtered status of picture
+        //Show filtered or unfilterd layer--asynctask Load
+        boolean filteredStatus = TiffHelper.isFiltered(mTiffImage);
 
-        changeImage(tempFile,TiffHelper.TIFF_FILTER_LAYER);
+        //TODO show image with AsynctaskLoad
+        //changeImage(tempFile,TiffHelper.TIFF_FILTER_LAYER);
+        changeImage(mTiffImage, (filteredStatus) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
         //Async End
 
+    }
+
+    private boolean unFilterImage(File tiffImage){
+        //re-save the tiff image with the isFiltered property set to ---(true for now)
+        //show fancy transition
+        //display bitmap of base image
+        return changeImage(tiffImage, TiffHelper.TIFF_BASE_LAYER);
     }
 
     private boolean changeImage(File tiffImage, int tiffLayer){
         if(tiffImage.exists()){
             mTiffImage = tiffImage;
-            mImageBitmap = TiffHelper.getLayerOfTiff(mTiffImage,tiffLayer);
-            setmImageView(mImageBitmap);
+            LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, tiffLayer);
+            LoadTiffImageTask loadTiffTask = new LoadTiffImageTask(mImageView);
+            loadTiffTask.execute(aParam);
+
+
+            //mImageBitmap = TiffHelper.getLayerOfTiff(mTiffImage,tiffLayer);
+            //setmImageView(mImageBitmap);
             return true;
         }
         else{
