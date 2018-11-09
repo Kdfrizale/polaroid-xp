@@ -1,11 +1,13 @@
 package frizzell.flores.polaroidxp.activity;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,18 +18,19 @@ import android.widget.ImageView;
 
 import java.io.File;
 
-import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
-public class FullscreenImageActivity extends AppCompatActivity {
+public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
 
     ImageView mImageView;
     File mTiffImage;
     Bitmap mImageBitmap;
     private LruCache<String, Bitmap> mMemoryCache;
     private AlphaAnimation mFadeOut;
+    private long lastUpdate;
+    private SensorManager sensorManager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -37,24 +40,25 @@ public class FullscreenImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fullscreen_image);
 
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
-        mImageView.setOnTouchListener(new OnGestureTouchListener(this) {
-            @Override
-            public void onLongClick(){
-                Log.e("TOUCH","LONG TOUCH");
-                Snackbar.make(mImageView, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-            @Override
-            public void onDoubleClick() {
-                //mFadeOut.startNow();
-                mImageView.startAnimation(mFadeOut);
-                unFilterImage(mTiffImage);
-            }
-            @Override
-            public void onSwipeRight() {
-                //#Useful
-            }
-        });
+//        mImageView.setOnTouchListener(new OnGestureTouchListener(this) {
+//            @Override
+//            public void onLongClick(){
+//                Log.e("TOUCH","LONG TOUCH");
+//                Snackbar.make(mImageView, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//            @Override
+//            public void onDoubleClick() {
+//                //mFadeOut.startNow();
+//                mImageView.startAnimation(mFadeOut);
+//                unFilterImage(mTiffImage);
+//            }
+//            @Override
+//            public void onSwipeRight() {
+//                //#Useful
+//            }
+//        });
+
 
         //Async Task can go here|| Async Start
         String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
@@ -121,7 +125,69 @@ public class FullscreenImageActivity extends AppCompatActivity {
         mImageView.setAnimation(mFadeOut);
         mFadeOut.cancel();
 
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        lastUpdate = System.currentTimeMillis();
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register this class as a listener for the orientation and
+        // accelerometer sensors
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        // unregister listener
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            getAccelerometer(event);
+        }
+
+    }
+
+    private void getAccelerometer(SensorEvent event) {
+        float[] values = event.values;
+        // Movement
+        float x = values[0];
+        float y = values[1];
+        float z = values[2];
+
+        float accelationSquareRoot = (x * x + y * y + z * z)
+                / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+        long actualTime = event.timestamp;
+        if (accelationSquareRoot >= 1.7) // sensitivity
+        {
+            if (actualTime - lastUpdate < 200) {
+                return;
+            }
+            lastUpdate = actualTime;
+//            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
+//                    .show();
+            mImageView.startAnimation(mFadeOut);
+            unFilterImage(mTiffImage);
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+
+
+
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
