@@ -29,8 +29,8 @@ public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskP
 
 
     public static class LoadTiffTaskParam {
-        File tiffImageFile;
-        int selectedLayer;
+        public File tiffImageFile;
+        public int selectedLayer;
 
         public LoadTiffTaskParam(File tiffImageFile, int selectedLayer){
             this.tiffImageFile = tiffImageFile;

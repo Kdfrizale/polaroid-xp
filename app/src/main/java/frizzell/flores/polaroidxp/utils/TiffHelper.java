@@ -83,6 +83,7 @@ public class TiffHelper {
         if(layer <= numberOfLayers - 1){
             options.inDirectoryNumber = layer;//1 is base image, 0 is filter
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage,options);
+            Log.e("IMPORTNAT SIZE BITMAP", "the size of bitmap is : " + temp.getByteCount());
             //stopwatch.logStopwatch("tiff bitmap returned");
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
