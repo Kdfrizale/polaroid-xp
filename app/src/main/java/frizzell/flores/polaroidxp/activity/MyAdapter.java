@@ -17,6 +17,7 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private File[] mGalleryList;
@@ -38,7 +39,12 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int i){
-        final File image = mGalleryList[i];
+        final File imageOriginal = mGalleryList[i];
+        final File tiffImage = TiffHelper.getRelatedTiffFromJpeg(this.context,imageOriginal.getName());//TODO this  can be improved by changing functions around
+        final File image = TiffHelper.getJpegToShowForTiff(this.context, tiffImage);
+
+
+
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         viewHolder.img.setOnTouchListener(new OnGestureTouchListener(this.context) {
             @Override
@@ -50,7 +56,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onDoubleClick() {
                 Intent fullscreenImageIntent = new Intent(context, FullscreenImageActivity.class);
-                fullscreenImageIntent.putExtra("ImageFileName", image.getName());
+                fullscreenImageIntent.putExtra("ImageFileName", imageOriginal.getName());
                 fullscreenImageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(fullscreenImageIntent);
             }

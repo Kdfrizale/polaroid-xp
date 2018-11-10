@@ -110,21 +110,32 @@ public class TiffHelper {
         return false;
     }
 
-    public static File getRelatedTiffFromJpeg(Context context, String jpegFilePath){
+    public static File getRelatedTiffFromJpeg(Context context, String jpegFileName){
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.tiffImagesFolder));
-        return new File(storageDir, jpegFilePath + ".tif");
+        return new File(storageDir, jpegFileName + ".tif");
     }
 
-    public static File getRelatedJpegFromTiff(Context context, String tiffFilePath){
+    public static File getRelatedJpegFromTiff(Context context, String tiffFileName){
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.jpegImagesFolder));
-        return new File(storageDir, tiffFilePath.substring(0, tiffFilePath.length() - 4));
+        return new File(storageDir, tiffFileName.substring(0, tiffFileName.length() - 4));
+    }
+    public static File getJpegToShowForTiff(Context context, File tiffFile){
+        if(isFiltered(tiffFile)){
+            //return baseimage
+            return getRelatedJpegFromTiff(context, tiffFile.getName());
+        }
+        else{
+            //return filter image
+            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.filterImagesFolder));
+            return new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
+
+        }
     }
 
+    public static void changeFilterStatus(File tiffFile){//TODO implement this
 
 
-
-
-
+    }
 
 
     public static class ImageDescription {

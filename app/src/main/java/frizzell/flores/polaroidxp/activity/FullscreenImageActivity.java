@@ -67,27 +67,9 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
         setUpCache();
 
-        boolean filteredStatus = TiffHelper.isFiltered(mTiffImage);
-        loadStartingImage(mTiffImage, (filteredStatus) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
+        loadStartingImage(mTiffImage, (TiffHelper.isFiltered(mTiffImage)) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
 
-        ///
-        //Anitmate playground
-        mFadeOut = new AlphaAnimation(0,1);
-        mFadeOut.setDuration(1700);
-        mFadeOut.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) { }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                //Trigger your action to change screens here.
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) { }
-        });
-        mImageView.setAnimation(mFadeOut);
-        mFadeOut.cancel();
+        setUpAnimation();
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mLastUpdate = System.currentTimeMillis();
@@ -128,6 +110,25 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
             protected int sizeOf(String key, Bitmap bitmap) { return bitmap.getByteCount() / 1024; }};
     }
 
+    private void setUpAnimation(){
+        mFadeOut = new AlphaAnimation(0,1);
+        mFadeOut.setDuration(1700);
+        mFadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //Trigger your action to change screens here.
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+        mImageView.setAnimation(mFadeOut);
+        mFadeOut.cancel();
+    }
+
     private void loadStartingImage(File tiffImage, int selectedLayer){
         if(selectedLayer == TiffHelper.TIFF_FILTER_LAYER){
             startLoadTiffTask(tiffImage,selectedLayer);
@@ -159,8 +160,10 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     private void unFilterImage(File tiffImage){
         startLoadTiffTask(tiffImage, TiffHelper.TIFF_BASE_LAYER);
-        //TODO show fancy Transisiton
+        mImageView.startAnimation(mFadeOut);
+
         //TODO Re-save the tiff image with the isFilter property changed after AsyncTask has completed
+        TiffHelper.changeFilterStatus(tiffImage);//TODO implement this function
     }
 
     private void getAccelerometer(SensorEvent event) {
@@ -181,7 +184,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
             mLastUpdate = actualTime;
 //            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
 //                    .show();
-            mImageView.startAnimation(mFadeOut);
+
             unFilterImage(mTiffImage);
         }
     }
