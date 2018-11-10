@@ -26,11 +26,10 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     ImageView mImageView;
     File mTiffImage;
-    Bitmap mImageBitmap;
     private LruCache<String, Bitmap> mMemoryCache;
     private AlphaAnimation mFadeOut;
-    private long lastUpdate;
-    private SensorManager sensorManager;
+    private long mLastUpdate;
+    private SensorManager mSensorManager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -38,7 +37,6 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         Log.e("Fullscreen", "Creating activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen_image);
-
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 //        mImageView.setOnTouchListener(new OnGestureTouchListener(this) {
 //            @Override
@@ -59,52 +57,18 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 //            }
 //        });
 
-
-        //Async Task can go here|| Async Start
         String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.tiffImagesFolder));
-        File tempFile = new File(storageDir, passedImageName + ".tif");
-        if(!tempFile.exists()){
+        mTiffImage = TiffHelper.getRelatedTiffFromJpeg(this, passedImageName);
+        if(!mTiffImage.exists()){
             //TODO notify user that the image could not be found
             //Log error
             finish();
         }
-        mTiffImage = tempFile;
-        //TODO read filtered status of picture
-        //Show filtered or unfilterd layer--asynctask Load
+
+        setUpCache();
+
         boolean filteredStatus = TiffHelper.isFiltered(mTiffImage);
-
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-
-        // Use 1/8th of the available memory for this memory cache.
-        final int cacheSize = maxMemory / 2;
-        Log.e("SIZE OF CACHE", "SIZE OF CACHE IS: "  +Integer.toString(cacheSize));
-
-        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap bitmap) {
-                // The cache size will be measured in kilobytes rather than
-                // number of items.
-                return bitmap.getByteCount() / 1024;
-            }
-        };
-
-
-        //TODO show image with AsynctaskLoad
-        //changeImage(tempFile,TiffHelper.TIFF_FILTER_LAYER);
-        changeImage(mTiffImage, (filteredStatus) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
-
-        //Start loading base if filter is shown
-        if(filteredStatus){
-
-        }
-
-        //TESTING LOAD BOTH TO CACHE
-        loadBitmapIntoCache(mTiffImage, TiffHelper.TIFF_BASE_LAYER);
-        loadBitmapIntoCache(mTiffImage, TiffHelper.TIFF_FILTER_LAYER);
-
-        //TODO all functions here need to be redesigned to accomodate cacheing images before displaying them
-
+        loadStartingImage(mTiffImage, (filteredStatus) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
 
         ///
         //Anitmate playground
@@ -125,9 +89,8 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView.setAnimation(mFadeOut);
         mFadeOut.cancel();
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        lastUpdate = System.currentTimeMillis();
-
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mLastUpdate = System.currentTimeMillis();
     }
 
     @Override
@@ -135,8 +98,8 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         super.onResume();
         // register this class as a listener for the orientation and
         // accelerometer sensors
-        sensorManager.registerListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        mSensorManager.registerListener(this,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -144,7 +107,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     protected void onPause() {
         // unregister listener
         super.onPause();
-        sensorManager.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
     }
 
 
@@ -153,7 +116,45 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             getAccelerometer(event);
         }
+    }
 
+    private void setUpCache(){
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 2;
+        Log.e("SIZE OF CACHE", "SIZE OF CACHE IS: "  +Integer.toString(cacheSize));
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) { return bitmap.getByteCount() / 1024; }};
+    }
+
+    private void loadStartingImage(File tiffImage, int selectedLayer){
+        if(selectedLayer == TiffHelper.TIFF_FILTER_LAYER){
+            startLoadTiffTask(tiffImage,selectedLayer);
+            startBitmapToCacheTask(tiffImage,TiffHelper.TIFF_BASE_LAYER);
+        }
+        else{
+            startLoadTiffTask(tiffImage,selectedLayer);
+        }
+    }
+
+    private void startLoadTiffTask(File tiffImage, int selectedLayer){
+        LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, selectedLayer);
+        LoadTiffImageTask loadTiffTask = new LoadTiffImageTask(mImageView, mMemoryCache);
+        loadTiffTask.execute(aParam);
+    }
+
+    private void startBitmapToCacheTask(File tiffImage, int selectedLayer){
+        LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, selectedLayer);
+        SaveBitmapToCacheTask task = new SaveBitmapToCacheTask();
+        task.execute(aParam);
+
+    }
+
+    private void unFilterImage(File tiffImage){
+        startLoadTiffTask(tiffImage, TiffHelper.TIFF_BASE_LAYER);
+        //TODO show fancy Transisiton
+        //TODO Re-save the tiff image with the isFilter property changed after AsyncTask has completed
     }
 
     private void getAccelerometer(SensorEvent event) {
@@ -168,15 +169,14 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         long actualTime = event.timestamp;
         if (accelationSquareRoot >= 1.7) // sensitivity
         {
-            if (actualTime - lastUpdate < 200) {
+            if (actualTime - mLastUpdate < 200) {
                 return;
             }
-            lastUpdate = actualTime;
+            mLastUpdate = actualTime;
 //            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
 //                    .show();
             mImageView.startAnimation(mFadeOut);
             unFilterImage(mTiffImage);
-
         }
     }
 
@@ -184,10 +184,6 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
-
-
-
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
@@ -198,60 +194,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     public Bitmap getBitmapFromMemCache(String key) {
         return mMemoryCache.get(key);
     }
-
-    public void loadBitmapIntoCache(File tiffFile, int layerOfTiff) {
-        final String imageKey = tiffFile.getAbsolutePath() + Integer.toString(layerOfTiff);
-
-        final Bitmap bitmap = getBitmapFromMemCache(imageKey);
-        if (bitmap != null) {
-            //mImageView.setImageBitmap(bitmap);
-        } else {
-
-            BitmapWorkerTask task = new BitmapWorkerTask();
-            LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffFile,layerOfTiff);
-            task.execute(aParam);
-        }
-    }
-
-    private boolean unFilterImage(File tiffImage){
-        //re-save the tiff image with the isFiltered property set to ---(true for now)
-        //show fancy transition
-        //display bitmap of base image
-        return changeImage(tiffImage, TiffHelper.TIFF_BASE_LAYER);
-    }
-
-    private boolean changeImage(File tiffImage, int tiffLayer){
-        if(tiffImage.exists()){
-            mTiffImage = tiffImage;
-            Bitmap bitmap = getBitmapFromMemCache(tiffImage.getAbsolutePath()+Integer.toString(tiffLayer));
-            if (bitmap != null){
-                mImageView.setImageBitmap(bitmap);
-            }
-            else{
-                LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, tiffLayer);
-                LoadTiffImageTask loadTiffTask = new LoadTiffImageTask(mImageView);
-                loadTiffTask.execute(aParam);
-            }
-
-
-
-            //mImageBitmap = TiffHelper.getLayerOfTiff(mTiffImage,tiffLayer);
-            //setmImageView(mImageBitmap);
-            return true;
-        }
-        else{
-            Log.e("Fullscreen","File did not exist");
-            return false;
-        }
-    }
-
-    private void setmImageView(Bitmap bitmap){
-        mImageView.setImageBitmap(bitmap);
-    }
-
-    class BitmapWorkerTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
-
-        // Decode image in background.
+    class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(LoadTiffImageTask.LoadTiffTaskParam... params) {
             final Bitmap bitmap = TiffHelper.getLayerOfTiff(params[0].tiffImageFile, params[0].selectedLayer);

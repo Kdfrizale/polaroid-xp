@@ -1,5 +1,6 @@
 package frizzell.flores.polaroidxp.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,8 @@ import org.beyka.tiffbitmapfactory.TiffSaver;
 
 import java.io.File;
 import java.util.Vector;
+
+import frizzell.flores.polaroidxp.R;
 
 public class TiffHelper {
     public final static int TIFF_BASE_LAYER = 0;
@@ -106,6 +109,18 @@ public class TiffHelper {
         }
         return false;
     }
+
+    public static File getRelatedTiffFromJpeg(Context context, String jpegFilePath){
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.tiffImagesFolder));
+        return new File(storageDir, jpegFilePath + ".tif");
+    }
+
+    public static File getRelatedJpegFromTiff(Context context, String tiffFilePath){
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.jpegImagesFolder));
+        return new File(storageDir, tiffFilePath.substring(0, tiffFilePath.length() - 4));
+    }
+
+
 
 
 
