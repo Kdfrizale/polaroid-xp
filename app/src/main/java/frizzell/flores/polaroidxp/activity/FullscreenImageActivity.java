@@ -139,14 +139,20 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     }
 
     private void startLoadTiffTask(File tiffImage, int selectedLayer){
+        LoadTiffImageTask.AsyncResponse asyncResponse = new LoadTiffImageTask.AsyncResponse() {
+            @Override
+            public void processFinish(Bitmap bitmap) {
+                mImageView.setImageBitmap(bitmap);
+            }
+        };
         LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, selectedLayer);
-        LoadTiffImageTask loadTiffTask = new LoadTiffImageTask(mImageView, mMemoryCache);
+        LoadTiffImageTask loadTiffTask = new LoadTiffImageTask(asyncResponse, mMemoryCache);
         loadTiffTask.execute(aParam);
     }
 
     private void startBitmapToCacheTask(File tiffImage, int selectedLayer){
         LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, selectedLayer);
-        SaveBitmapToCacheTask task = new SaveBitmapToCacheTask();
+        SaveBitmapToCacheTask task = new SaveBitmapToCacheTask(mMemoryCache);
         task.execute(aParam);
 
     }
@@ -185,22 +191,30 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
+    public static void addBitmapToMemoryCache(LruCache<String, Bitmap>  memoryCache, String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(memoryCache, key) == null) {
+            memoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
-        return mMemoryCache.get(key);
+    public static Bitmap getBitmapFromMemCache(LruCache<String, Bitmap>  memoryCache, String key) {
+        return memoryCache.get(key);
     }
-    class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
+    static class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
+        private LruCache<String,Bitmap> memoryCache;
+
+        public SaveBitmapToCacheTask(LruCache<String,Bitmap> memoryCache){
+            this.memoryCache = memoryCache;
+        }
+
         @Override
         protected Bitmap doInBackground(LoadTiffImageTask.LoadTiffTaskParam... params) {
             final Bitmap bitmap = TiffHelper.getLayerOfTiff(params[0].tiffImageFile, params[0].selectedLayer);
-            addBitmapToMemoryCache(params[0].tiffImageFile.getAbsoluteFile() + Integer.toString(params[0].selectedLayer), bitmap);
+            addBitmapToMemoryCache(this.memoryCache,params[0].tiffImageFile.getAbsoluteFile() + Integer.toString(params[0].selectedLayer), bitmap);
             return bitmap;
         }
+
+
 
     }
 

@@ -10,15 +10,19 @@ import java.io.File;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
-    private ImageView mImageView;//TODO look into how best to approach this
     private LruCache<String, Bitmap> mLruCache;
     private String mKey;
-    public LoadTiffImageTask(ImageView imageView){
-        mImageView = imageView;
+    public AsyncResponse response = null;
+    public LoadTiffImageTask(AsyncResponse response){
+        this.response = response;
     }
-    public LoadTiffImageTask(ImageView imageView, LruCache<String, Bitmap> lruCache){
-        mImageView = imageView;
+    public LoadTiffImageTask(AsyncResponse response, LruCache<String, Bitmap> lruCache){
         mLruCache = lruCache;
+        this.response = response;
+    }
+
+    public interface AsyncResponse {
+        void processFinish(Bitmap bitmap);
     }
 
     @Override
@@ -38,7 +42,7 @@ public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskP
 
     @Override
     protected void onPostExecute(Bitmap bitmap){
-        mImageView.setImageBitmap(bitmap);
+        response.processFinish(bitmap);
         if (mLruCache != null){
             if(mLruCache.get(mKey) == null){
                 mLruCache.put(mKey, bitmap);
