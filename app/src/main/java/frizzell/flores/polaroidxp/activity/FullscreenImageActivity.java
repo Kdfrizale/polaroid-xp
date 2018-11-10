@@ -20,6 +20,7 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
+import frizzell.flores.polaroidxp.asynctask.SaveBitmapToCacheTask;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
@@ -163,7 +164,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView.startAnimation(mFadeOut);
 
         //TODO Re-save the tiff image with the isFilter property changed after AsyncTask has completed
-        TiffHelper.changeFilterStatus(tiffImage);//TODO implement this function
+        TiffHelper.setFilterStatus(tiffImage, true);//TODO implement this function
     }
 
     private void getAccelerometer(SensorEvent event) {
@@ -194,31 +195,6 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     }
 
-    public static void addBitmapToMemoryCache(LruCache<String, Bitmap>  memoryCache, String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(memoryCache, key) == null) {
-            memoryCache.put(key, bitmap);
-        }
-    }
 
-    public static Bitmap getBitmapFromMemCache(LruCache<String, Bitmap>  memoryCache, String key) {
-        return memoryCache.get(key);
-    }
-    static class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
-        private LruCache<String,Bitmap> memoryCache;
-
-        public SaveBitmapToCacheTask(LruCache<String,Bitmap> memoryCache){
-            this.memoryCache = memoryCache;
-        }
-
-        @Override
-        protected Bitmap doInBackground(LoadTiffImageTask.LoadTiffTaskParam... params) {
-            final Bitmap bitmap = TiffHelper.getLayerOfTiff(params[0].tiffImageFile, params[0].selectedLayer);
-            addBitmapToMemoryCache(this.memoryCache,params[0].tiffImageFile.getAbsoluteFile() + Integer.toString(params[0].selectedLayer), bitmap);
-            return bitmap;
-        }
-
-
-
-    }
 
 }

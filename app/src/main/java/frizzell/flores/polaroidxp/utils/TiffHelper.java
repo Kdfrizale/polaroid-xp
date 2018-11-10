@@ -132,7 +132,9 @@ public class TiffHelper {
         }
     }
 
-    public static void changeFilterStatus(File tiffFile){//TODO implement this
+    public static void setFilterStatus(File tiffFile, boolean filterStatus){//TODO implement this
+
+
 
 
     }
