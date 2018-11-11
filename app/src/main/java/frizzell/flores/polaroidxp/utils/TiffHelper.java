@@ -28,11 +28,11 @@ public class TiffHelper {
     //Thread Creating tiff/appending filter after taking a picture, so the user can either take another picture quickly or navigate the menu
     //Potentially create function to start caching the Tiff's bitmaps the user is most likely to open (e.g. the filter and base at the same time, the lataest photo they have taken, etc)
 
-    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFilePath, boolean filterStatus){
+    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFile, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("CreateFilteredTiff");
         File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile, filterStatus);
         //stopwatch.logStopwatch("Created Based");
-        Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath.getAbsolutePath(), filterStatus);
+        Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFile, filterStatus);
         //stopwatch.logStopwatch("Created Appenned Filter");
         return result;
     }
@@ -54,14 +54,14 @@ public class TiffHelper {
         return null;
     }
 
-    public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath, boolean filterStatus){
+    public static boolean appendFilterToTiff(String tiffFilePath, File jpegFilterFile, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
-        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
+        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());
         //stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
-        options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFilePath));
+        options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()));
         options.compressionScheme = CompressionScheme.JPEG;
-        ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFilterFilePath));
+        ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         options.imageDescription = tempDescrip.encodeToString();
         boolean result = TiffSaver.appendBitmap(tiffFilePath, filter, options);
         return result;
@@ -122,6 +122,22 @@ public class TiffHelper {
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.jpegImagesFolder));
         return new File(storageDir, tiffFileName.substring(0, tiffFileName.length() - 4));
     }
+
+    public static File getFilterJpegFromTiff(Context context, File tiffFile){
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inDirectoryNumber = TIFF_FILTER_LAYER;
+
+        TiffBitmapFactory.decodeFile(tiffFile, options);
+
+        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+        ImageDescription imageDescrip = ImageDescription.decodeImageDescription(options.outImageDescription);
+        if(imageDescrip != null){
+            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.filterImagesFolder));
+            return new File(storageDir, imageDescrip.mFilterFileName);
+        }
+        return null;
+    }
     public static File getJpegToShowForTiff(Context context, File tiffFile){
         if(isFiltered(tiffFile)){
             //return baseimage
@@ -129,15 +145,24 @@ public class TiffHelper {
         }
         else{
             //return filter image
-            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.filterImagesFolder));
-            return new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
+            return getFilterJpegFromTiff(context,tiffFile);
+            //File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),context.getString(R.string.filterImagesFolder));
+            //return new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
 
         }
     }
 
     public static void setFilterStatus(Context context, File tiffFile, boolean filterStatus){//TODO implement this
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP/FilterImages");
-        File filter = new File(storageDir,"1.jpg");//TODO change this to pull filter filename from tiff description
+        //File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP/FilterImages");
+        //File filter = new File(storageDir,"1.jpg");//TODO change this to pull filter filename from tiff description
+        File filter = getFilterJpegFromTiff(context,tiffFile);
+
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        TiffBitmapFactory.decodeFile(tiffFile, options);
+
+        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+
         File jpegBase = getRelatedJpegFromTiff(context, tiffFile.getName());
 
         SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, true);
@@ -148,11 +173,14 @@ public class TiffHelper {
 
     public static class ImageDescription {
         public static final int DESCRIPTION =0;
-        public static final int FILTERED =1;
-        public static final int ORIENTATION =2;
+        public static final int FILTER_FILE_NAME=1;
+        public static final int FILTERED =2;
+        public static final int ORIENTATION =3;
+
         private static final String delimiter = ",";
 
         String mDescription = "";
+        String mFilterFileName="";
         Boolean mFiltered = false;
         int mOrientation = 1;
         public ImageDescription(Boolean filtered, int orientation){
@@ -160,22 +188,23 @@ public class TiffHelper {
             this.mOrientation = orientation;
         }
 
-        public ImageDescription(Boolean filtered, int orientation, String description){
+        public ImageDescription(Boolean filtered, int orientation, String description, String filterFileName){
             this.mFiltered = filtered;
             this.mOrientation = orientation;
             this.mDescription = description;
+            this.mFilterFileName = filterFileName;
         }
 
         public String encodeToString(){
-            return mDescription + delimiter + String.valueOf(mFiltered) + delimiter + String.valueOf(mOrientation);
+            return mDescription + delimiter + mFilterFileName+ delimiter + String.valueOf(mFiltered) + delimiter + String.valueOf(mOrientation);
         }
 
         public static ImageDescription decodeImageDescription(String description){
             String[] properties = description.split(ImageDescription.delimiter);
-            if(properties.length == 3){
+            if(properties.length == 4){
                 Boolean filterStatus = Boolean.valueOf(properties[FILTERED]);
                 int orientationStaus = Integer.valueOf(properties[ORIENTATION]);
-                return new ImageDescription(filterStatus,orientationStaus,properties[DESCRIPTION]);
+                return new ImageDescription(filterStatus,orientationStaus,properties[DESCRIPTION], properties[FILTER_FILE_NAME]);
             }
             return null;
         }

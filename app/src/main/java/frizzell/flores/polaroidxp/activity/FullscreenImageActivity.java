@@ -176,6 +176,8 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         float y = values[1];
         float z = values[2];
 
+
+
         float accelationSquareRoot = (x * x + y * y + z * z)
                 / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
         long actualTime = event.timestamp;
@@ -184,6 +186,9 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
             if (actualTime - mLastUpdate < 200) {
                 return;
             }
+//            Log.e("Sensor INFO", "X was: " + x);
+//            Log.e("Sensor INFO", "Y was: " + y);
+//            Log.e("Sensor INFO", "Z was: " + z);
             mLastUpdate = actualTime;
 //            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
 //                    .show();
@@ -191,6 +196,29 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
             unFilterImage(mTiffImage);
         }
     }
+
+//    private void getAccelerometer(SensorEvent event) {
+//        float[] values = event.values;
+//        // Movement
+//        float x = values[0];
+//        float y = values[1];
+//        float z = values[2];
+//
+//        float accelationSquareRoot = (x * x + y * y + z * z)
+//                / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+//        long actualTime = event.timestamp;
+//        if (accelationSquareRoot >= 1.7) // sensitivity
+//        {
+//            if (actualTime - mLastUpdate < 200) {
+//                return;
+//            }
+//            mLastUpdate = actualTime;
+////            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
+////                    .show();
+//
+//            unFilterImage(mTiffImage);
+//        }
+//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
