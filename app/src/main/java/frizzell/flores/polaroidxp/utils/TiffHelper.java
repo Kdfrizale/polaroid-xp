@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.Vector;
 
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
 
 public class TiffHelper {
     public final static int TIFF_BASE_LAYER = 0;
@@ -27,24 +28,25 @@ public class TiffHelper {
     //Thread Creating tiff/appending filter after taking a picture, so the user can either take another picture quickly or navigate the menu
     //Potentially create function to start caching the Tiff's bitmaps the user is most likely to open (e.g. the filter and base at the same time, the lataest photo they have taken, etc)
 
-    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFilePath){
+    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFilePath, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("CreateFilteredTiff");
-        File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile);
+        File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile, filterStatus);
         //stopwatch.logStopwatch("Created Based");
-        Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath.getAbsolutePath());
+        Boolean result = appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFilePath.getAbsolutePath(), filterStatus);
         //stopwatch.logStopwatch("Created Appenned Filter");
         return result;
     }
 
-    public static File createTiffFromJpeg(String parentDirectory, File jpegFile){
+    public static File createTiffFromJpeg(String parentDirectory, File jpegFile, boolean filterStatus){
         if(StorageHelper.isExternalStorageWritable()){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             File tempTiff = new File(storageDir, jpegFile.getName() + ".tif");
             TiffConverter.ConverterOptions options = new TiffConverter.ConverterOptions();
             options.compressionScheme = CompressionScheme.JPEG;
-            ImageDescription tempDescrip =  new ImageDescription(false, ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
+            ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
             options.imageDescription = tempDescrip.encodeToString();
             if(TiffConverter.convertJpgTiff(jpegFile.getAbsolutePath(), tempTiff.getAbsolutePath(), options, null)){
+                Log.e("Failed Tiff Conversion","Returning file");
                 return tempTiff;
             }
         }
@@ -52,16 +54,17 @@ public class TiffHelper {
         return null;
     }
 
-    public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath){
+    public static boolean appendFilterToTiff(String tiffFilePath, String jpegFilterFilePath, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
         Bitmap filter = BitmapFactory.decodeFile(jpegFilterFilePath);
         //stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFilePath));
         options.compressionScheme = CompressionScheme.JPEG;
-        ImageDescription tempDescrip =  new ImageDescription(false, ImageHelper.getImageOrientation(jpegFilterFilePath));
+        ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFilterFilePath));
         options.imageDescription = tempDescrip.encodeToString();
-        return TiffSaver.appendBitmap(tiffFilePath, filter, options);
+        boolean result = TiffSaver.appendBitmap(tiffFilePath, filter, options);
+        return result;
 
     }
 
@@ -132,11 +135,14 @@ public class TiffHelper {
         }
     }
 
-    public static void setFilterStatus(File tiffFile, boolean filterStatus){//TODO implement this
+    public static void setFilterStatus(Context context, File tiffFile, boolean filterStatus){//TODO implement this
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP/FilterImages");
+        File filter = new File(storageDir,"1.jpg");//TODO change this to pull filter filename from tiff description
+        File jpegBase = getRelatedJpegFromTiff(context, tiffFile.getName());
 
-
-
-
+        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, true);
+        SaveTiffTask createImageTask = new SaveTiffTask();
+        createImageTask.execute(aParam);
     }
 
 

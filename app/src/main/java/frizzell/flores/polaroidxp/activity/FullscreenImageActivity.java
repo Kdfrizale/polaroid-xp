@@ -164,7 +164,9 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView.startAnimation(mFadeOut);
 
         //TODO Re-save the tiff image with the isFilter property changed after AsyncTask has completed
-        TiffHelper.setFilterStatus(tiffImage, true);//TODO implement this function
+        if(!TiffHelper.isFiltered(tiffImage)){
+            TiffHelper.setFilterStatus(this,tiffImage, true);//TODO implement this function
+        }
     }
 
     private void getAccelerometer(SensorEvent event) {
