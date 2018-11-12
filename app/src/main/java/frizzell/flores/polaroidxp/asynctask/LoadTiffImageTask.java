@@ -3,7 +3,6 @@ package frizzell.flores.polaroidxp.asynctask;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.LruCache;
-import android.widget.ImageView;
 
 import java.io.File;
 

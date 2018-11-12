@@ -1,22 +1,9 @@
 package frizzell.flores.polaroidxp.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.Environment;
-import android.util.Log;
-
-import org.beyka.tiffbitmapfactory.Orientation;
-import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Vector;
-
-import frizzell.flores.polaroidxp.FileConverterThread;
 import frizzell.flores.polaroidxp.R;
 
 public class StorageHelper {
