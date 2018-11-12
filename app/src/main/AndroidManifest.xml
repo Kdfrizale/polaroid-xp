@@ -63,15 +63,6 @@
                 android:value="frizzell.flores.polaroidxp.activity.GalleryActivity" />
         </activity>
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="frizzell.flores.polaroidxp"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
-        </provider>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="4c673e6958b5999669bb07d5b8e84b5e8c87cd5e" />

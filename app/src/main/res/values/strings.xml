@@ -20,6 +20,7 @@
     <string name="tiffImagesFolder">polaroidXP/TiffImages</string>
     <string name="filterImagesFolder">polaroidXP/FilterImages</string>
 
+
     <!--Internal Page-->
     <string name="default_caption">Default Caption</string>
 
@@ -39,11 +40,6 @@
     <string name="Signed_Photo_Key">Message</string>
     <string name="Notification_Setting_Key">Notification</string>
     <string name="Support_Us_Key">Support</string>
-
-
-    <!--Trash Ignore below this -->
-
-    <!-- Strings related to Settings -->
 
 
 </resources>
