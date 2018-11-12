@@ -1,13 +1,10 @@
 package frizzell.flores.polaroidxp.activity;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,31 +29,11 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     private long mLastUpdate;
     private SensorManager mSensorManager;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e("Fullscreen", "Creating activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen_image);
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
-//        mImageView.setOnTouchListener(new OnGestureTouchListener(this) {
-//            @Override
-//            public void onLongClick(){
-//                Log.e("TOUCH","LONG TOUCH");
-//                Snackbar.make(mImageView, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//            @Override
-//            public void onDoubleClick() {
-//                //mFadeOut.startNow();
-//                mImageView.startAnimation(mFadeOut);
-//                unFilterImage(mTiffImage);
-//            }
-//            @Override
-//            public void onSwipeRight() {
-//                //#Useful
-//            }
-//        });
 
         String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
         mTiffImage = TiffHelper.getRelatedTiffFromJpeg(this, passedImageName);
@@ -79,8 +56,6 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     @Override
     protected void onResume() {
         super.onResume();
-        // register this class as a listener for the orientation and
-        // accelerometer sensors
         mSensorManager.registerListener(this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
@@ -88,7 +63,6 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     @Override
     protected void onPause() {
-        // unregister listener
         super.onPause();
         mSensorManager.unregisterListener(this);
     }
@@ -119,9 +93,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
             public void onAnimationStart(Animation animation) { }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
-                //Trigger your action to change screens here.
-            }
+            public void onAnimationEnd(Animation animation) { }
 
             @Override
             public void onAnimationRepeat(Animation animation) { }
@@ -163,20 +135,16 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         startLoadTiffTask(tiffImage, TiffHelper.TIFF_BASE_LAYER);
         mImageView.startAnimation(mFadeOut);
 
-        //TODO Re-save the tiff image with the isFilter property changed after AsyncTask has completed
         if(!TiffHelper.isFiltered(tiffImage)){
-            TiffHelper.setFilterStatus(this,tiffImage, true);//TODO implement this function
+            TiffHelper.setFilterStatus(this,tiffImage, true);
         }
     }
 
     private void getAccelerometer(SensorEvent event) {
         float[] values = event.values;
-        // Movement
         float x = values[0];
         float y = values[1];
         float z = values[2];
-
-
 
         float accelationSquareRoot = (x * x + y * y + z * z)
                 / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
@@ -190,41 +158,10 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 //            Log.e("Sensor INFO", "Y was: " + y);
 //            Log.e("Sensor INFO", "Z was: " + z);
             mLastUpdate = actualTime;
-//            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
-//                    .show();
-
             unFilterImage(mTiffImage);
         }
     }
 
-//    private void getAccelerometer(SensorEvent event) {
-//        float[] values = event.values;
-//        // Movement
-//        float x = values[0];
-//        float y = values[1];
-//        float z = values[2];
-//
-//        float accelationSquareRoot = (x * x + y * y + z * z)
-//                / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
-//        long actualTime = event.timestamp;
-//        if (accelationSquareRoot >= 1.7) // sensitivity
-//        {
-//            if (actualTime - mLastUpdate < 200) {
-//                return;
-//            }
-//            mLastUpdate = actualTime;
-////            Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
-////                    .show();
-//
-//            unFilterImage(mTiffImage);
-//        }
-//    }
-
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-
-
+    public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 }
