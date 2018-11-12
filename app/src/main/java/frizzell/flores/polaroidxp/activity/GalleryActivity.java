@@ -8,12 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.crashlytics.android.Crashlytics;
-
-import frizzell.flores.polaroidxp.activity.MyAdapter;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
-import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
 
@@ -23,13 +19,12 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());//TODO move this to the main Activity
         setContentView(R.layout.gallery_layout);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.imagegallery);
         mRecyclerView.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);//TODO const here
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemViewCacheSize(20);
         mRecyclerView.setDrawingCacheEnabled(true);
@@ -37,7 +32,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
 
-        MyAdapter adapter = new MyAdapter(getApplicationContext(), files);
+        GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(), files);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -66,17 +61,6 @@ public class GalleryActivity extends AppCompatActivity {
         switch(id){
             case R.id.action_gallery_sort:
                 //TODO create options to sort by date or something? maybe get rid of this method
-                return true;
-            case R.id.action_gallery_select_all:
-                //TODO create action to select all images,
-                //TODO note this is just a temporary crash me button to test our debugging and crash reporting services
-                throw new RuntimeException("This was a test crash");
-                //return true;
-            case R.id.action_gallery_decode_selected:
-                //TODO implement decode function
-                //TODO note this is just a temporary crash me button to test our debugging and crash reporting services
-                //TODO when implemented, multi-Async tasks will be absolutely necessary for mass picture conversions
-                Crashlytics.getInstance().crash();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

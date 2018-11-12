@@ -19,37 +19,44 @@ import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
-class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private File[] mGalleryList;
     private Context context;
     private View myView;
 
-    public MyAdapter(Context context, File[] galleryList){
+    public GalleryAdapter(Context context, File[] galleryList){
         this.mGalleryList = galleryList;
         this.context = context;
     }
 
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i){
+    public GalleryAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i){
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_layout,  viewGroup,false);
         this.myView = view;
         return new ViewHolder(view);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
     @Override
-    public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int i){
+    public void onBindViewHolder(final GalleryAdapter.ViewHolder viewHolder, int i){
         final File imageOriginal = mGalleryList[i];
         final File tiffImage = TiffHelper.getRelatedTiffFromJpeg(this.context,imageOriginal.getName());//TODO this  can be improved by changing functions around
         final File image = TiffHelper.getJpegToShowForTiff(this.context, tiffImage);
 
 
+        setUpImageView(viewHolder.img, imageOriginal);
 
-        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        viewHolder.img.setOnTouchListener(new OnGestureTouchListener(this.context) {
+        Log.e("Glide","image name: " + image.getAbsolutePath());
+        Glide.with(this.myView).load(image).into(viewHolder.img);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setUpImageView(final ImageView imageView, final File imageOriginal){
+       imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+       imageView.setOnTouchListener(new OnGestureTouchListener(this.context) {
             @Override
             public void onLongClick(){
-                Snackbar.make(viewHolder.img, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(imageView, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
 
@@ -61,8 +68,6 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 context.startActivity(fullscreenImageIntent);
             }
         });
-            Log.e("Glide","image name: " + image.getAbsolutePath());
-            Glide.with(this.myView).load(image).into(viewHolder.img);
     }
 
     @Override
@@ -78,9 +83,4 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         }
     }
-
-
-
-
-
 }

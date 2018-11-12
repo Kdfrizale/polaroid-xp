@@ -56,7 +56,7 @@ public class TiffHelper {
 
     public static boolean appendFilterToTiff(String tiffFilePath, File jpegFilterFile, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
-        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());//TODO it reads a null file here sometimes
+        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());//TODO it reads a null file here sometimes; happens when user unfilters the same image in quick succession
         //stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()));
