@@ -30,24 +30,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
-import frizzell.flores.polaroidxp.utils.PermissionsHelper;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
-
-//    //values saved/changed in Bundle
-//    private boolean picture_border_state;
-//    private String picture_custom_message;
-//
-//    //value names saved in Bundle
-//    private static final String saved_bundle_picture_border_state = "picture_border_state";
-//    private static final String saved_bundle_picture_custom_message = "picture_custom_message";
 
     ImageView mImageView;
     File mWorkingImageFile;
@@ -60,6 +49,30 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.settings_page, false);
         mImageView = (ImageView) findViewById(R.id.returnedImageView);
 
+        setUpButtons();
+
+        checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        StorageHelper.createDirectoryTrees(this);
+    }
+
+    private void checkPermission(Context context, String aPermission){
+        Permissions.check(context, aPermission, null, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                Log.d("PolaroidXP", "PERMISSIONS GRANTED");
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                Log.e("PolaroidXP", "PERMISSION DENIED, exiting app");
+                finish();
+                System.exit(0);
+            }
+        });
+    }
+
+    private void setUpButtons(){
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,31 +95,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) { startActivity(new Intent(MainActivity.this, GalleryActivity.class));
             }});
-
-        Log.e("Main", "before permission check");
-        Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
-            @Override
-            public void onGranted() {
-                Log.d("PolaroidXP", "PERMISSIONS GRANTED");
-            }
-
-            @Override
-            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
-                Log.d("PolaroidXP", "PERMISSION DENIED, exiting app");
-                finish();
-                System.exit(0);
-            }
-        });
-
-        StorageHelper.createDirectoryTrees(this);
-
-
-//        //Guarantee options that are necessary here are always saved and retrieved per user. NO MATTER WHAT!
-//        //also to save the value of the photo path just in case.
-//        if(savedInstanceState != null){
-//            picture_border_state = savedInstanceState.getBoolean(saved_bundle_picture_border_state, true);
-//            picture_custom_message = savedInstanceState.getString(saved_bundle_picture_custom_message);
-//        }
     }
 
     @Override
@@ -127,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar willgit
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
@@ -150,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 mWorkingImageFile = ImageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
             } catch (IOException ex) {
                 Log.e("PolaroidXP", "IO exception", ex);
-                PermissionsHelper.askForPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+                checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 return;
             }
             if (mWorkingImageFile != null) {
@@ -171,13 +156,11 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CODE_IMAGE_CAPTURE:
                 if (resultCode == Activity.RESULT_OK) {
                     if(mWorkingImageFile.exists()){
-                        Log.e("FILENAME MAIN", "Name: "+ mWorkingImageFile.getName());
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
                         SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
                         SaveTiffTask createImageTask = new SaveTiffTask();
                         createImageTask.execute(aParam);
-                        //Boolean tiffCreated = TiffHelper.createFilteredTiff(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
 
                     }
                 }

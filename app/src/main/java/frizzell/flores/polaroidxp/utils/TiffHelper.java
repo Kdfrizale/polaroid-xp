@@ -56,7 +56,7 @@ public class TiffHelper {
 
     public static boolean appendFilterToTiff(String tiffFilePath, File jpegFilterFile, boolean filterStatus){
         //LogHelper.Stopwatch stopwatch = new LogHelper.Stopwatch("Bitmap creation");
-        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());
+        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());//TODO it reads a null file here sometimes
         //stopwatch.logStopwatch("Finished Bitmap");
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()));
@@ -152,9 +152,7 @@ public class TiffHelper {
         }
     }
 
-    public static void setFilterStatus(Context context, File tiffFile, boolean filterStatus){//TODO implement this
-        //File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"polaroidXP/FilterImages");
-        //File filter = new File(storageDir,"1.jpg");//TODO change this to pull filter filename from tiff description
+    public static void setFilterStatus(Context context, File tiffFile, boolean filterStatus){
         File filter = getFilterJpegFromTiff(context,tiffFile);
 
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
@@ -165,7 +163,7 @@ public class TiffHelper {
 
         File jpegBase = getRelatedJpegFromTiff(context, tiffFile.getName());
 
-        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, true);
+        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, filterStatus);
         SaveTiffTask createImageTask = new SaveTiffTask();
         createImageTask.execute(aParam);
     }

@@ -10,17 +10,7 @@ public class SaveTiffTask extends AsyncTask<SaveTiffTask.SaveTiffTaskParam, Inte
     @Override
     protected Boolean doInBackground(SaveTiffTaskParam... params) {
         for (int i =0; i < params.length; i++){
-            if(params[i].overwriteFile){
-                //Change an existing tiff file so that is base is shown
-                //get the current files TIFF jpeg, filter jpeg, and create options with filter set to true
-                TiffHelper.createFilteredTiff(params[i].parentDirectory,params[i].baseImageJpegFile,params[i].filterImageJpegFile, true);
-                //TODO change this so filterstatus just pulls overwritefile boolean
-            }
-            else{
-                //create a new tiff image that has filter shown
-                TiffHelper.createFilteredTiff(params[i].parentDirectory,params[i].baseImageJpegFile,params[i].filterImageJpegFile, false);
-            }
-
+            TiffHelper.createFilteredTiff(params[i].parentDirectory,params[i].baseImageJpegFile,params[i].filterImageJpegFile, params[i].filterStatus);
         }
         return null;
     }
@@ -29,7 +19,7 @@ public class SaveTiffTask extends AsyncTask<SaveTiffTask.SaveTiffTaskParam, Inte
         String parentDirectory;
         File baseImageJpegFile;
         File filterImageJpegFile;
-        boolean overwriteFile = false;
+        boolean filterStatus = false;
 
         public SaveTiffTaskParam(String parentDirectory, File baseImageFile, File filterImageFile){
             this.parentDirectory = parentDirectory;
@@ -37,11 +27,11 @@ public class SaveTiffTask extends AsyncTask<SaveTiffTask.SaveTiffTaskParam, Inte
             this.filterImageJpegFile = filterImageFile;
         }
 
-        public SaveTiffTaskParam(String parentDirectory, File baseImageFile, File filterImageFile, boolean overwriteFile){
+        public SaveTiffTaskParam(String parentDirectory, File baseImageFile, File filterImageFile, boolean filterStatus){
             this.parentDirectory = parentDirectory;
             this.baseImageJpegFile = baseImageFile;
             this.filterImageJpegFile = filterImageFile;
-            this.overwriteFile = overwriteFile;
+            this.filterStatus = filterStatus;
         }
     }
 }
