@@ -16,14 +16,17 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
+import frizzell.flores.polaroidxp.singleton.ActiveWorkLedger;
 
 public class TiffHelper {
     public final static int TIFF_BASE_LAYER = 0;
     public final static int TIFF_FILTER_LAYER = 1;
 
-    public static boolean createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFile, boolean filterStatus){
+    public static File createFilteredTiff(String parentDirectory, File jpegFile, File jpegFilterFile, boolean filterStatus){
+
         File tempTiff = createTiffFromJpeg(parentDirectory, jpegFile, filterStatus);
-        return appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFile, filterStatus);
+        appendFilterToTiff(tempTiff.getAbsolutePath(),jpegFilterFile, filterStatus);
+        return tempTiff;
     }
 
     public static File createTiffFromJpeg(String parentDirectory, File jpegFile, boolean filterStatus){
@@ -125,20 +128,32 @@ public class TiffHelper {
     }
 
     public static void setFilterStatus(Context context, File tiffFile, boolean filterStatus){
-        File filter = getFilterJpegFromTiff(context,tiffFile);
+        if(!isWorkClaimed(tiffFile.getAbsolutePath())){
+            addWorkToLedger(tiffFile.getAbsolutePath());
+            File filter = getFilterJpegFromTiff(context,tiffFile);
 
-        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        TiffBitmapFactory.decodeFile(tiffFile, options);
+            TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            TiffBitmapFactory.decodeFile(tiffFile, options);
 
-        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+            Log.e("Reading Tiff", "File options: " + options.outImageDescription);
 
-        File jpegBase = getRelatedJpegFromTiff(context, tiffFile.getName());
+            File jpegBase = getRelatedJpegFromTiff(context, tiffFile.getName());
 
-        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, filterStatus);
-        SaveTiffTask createImageTask = new SaveTiffTask();
-        createImageTask.execute(aParam);
+            SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam("polaroidXP/TiffImages",jpegBase,filter, filterStatus);
+            SaveTiffTask createImageTask = new SaveTiffTask();
+            createImageTask.execute(aParam);
+        }
     }
+
+    private static boolean isWorkClaimed(String aWorkItemKey){
+        return ActiveWorkLedger.getInstance().getActiveWork().contains(aWorkItemKey);
+    }
+
+    private static void addWorkToLedger(String aWorkItemKey){
+        ActiveWorkLedger.getInstance().addActiveWork(aWorkItemKey);
+    }
+
 
     public static class ImageDescription {
         public static final int DESCRIPTION =0;

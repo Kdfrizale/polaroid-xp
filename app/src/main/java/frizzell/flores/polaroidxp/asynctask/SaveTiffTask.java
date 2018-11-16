@@ -4,15 +4,21 @@ import android.os.AsyncTask;
 
 import java.io.File;
 
+import frizzell.flores.polaroidxp.singleton.ActiveWorkLedger;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class SaveTiffTask extends AsyncTask<SaveTiffTask.SaveTiffTaskParam, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(SaveTiffTaskParam... params) {
         for (int i =0; i < params.length; i++){
-            TiffHelper.createFilteredTiff(params[i].parentDirectory,params[i].baseImageJpegFile,params[i].filterImageJpegFile, params[i].filterStatus);
+            File tempTiff = TiffHelper.createFilteredTiff(params[i].parentDirectory,params[i].baseImageJpegFile,params[i].filterImageJpegFile, params[i].filterStatus);
+            removeWorkFromLedger(tempTiff.getAbsolutePath());
         }
         return null;
+    }
+
+    private void removeWorkFromLedger(String aWorkItemKey){
+        ActiveWorkLedger.getInstance().removeActiveWork(aWorkItemKey);
     }
 
     public static class SaveTiffTaskParam {
