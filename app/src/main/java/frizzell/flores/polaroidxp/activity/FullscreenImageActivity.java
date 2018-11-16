@@ -140,7 +140,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         }
     }
 
-    private void getAccelerometer(SensorEvent event) {
+    private void getAccelerometer(SensorEvent event) {//TODO rename this
         float[] values = event.values;
         float x = values[0];
         float y = values[1];

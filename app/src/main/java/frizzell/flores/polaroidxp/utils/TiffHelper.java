@@ -38,7 +38,7 @@ public class TiffHelper {
             ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFile.getAbsolutePath()));
             options.imageDescription = tempDescrip.encodeToString();
             if(TiffConverter.convertJpgTiff(jpegFile.getAbsolutePath(), tempTiff.getAbsolutePath(), options, null)){
-                Log.e("Failed Tiff Conversion","Returning file");
+                Log.e("Success Tiff Conversion","Returning file");
                 return tempTiff;
             }
         }
@@ -47,15 +47,13 @@ public class TiffHelper {
     }
 
     public static boolean appendFilterToTiff(String tiffFilePath, File jpegFilterFile, boolean filterStatus){
-        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());//TODO it reads a null file here sometimes; happens when user unfilters the same image in quick succession
+        Bitmap filter = BitmapFactory.decodeFile(jpegFilterFile.getAbsolutePath());
         TiffSaver.SaveOptions options = new TiffSaver.SaveOptions();
         options.orientation = ImageHelper.getOrientationEnum(ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()));
         options.compressionScheme = CompressionScheme.JPEG;
         ImageDescription tempDescrip =  new ImageDescription(filterStatus, ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         options.imageDescription = tempDescrip.encodeToString();
         return TiffSaver.appendBitmap(tiffFilePath, filter, options);
-
-
     }
 
     public static Bitmap getLayerOfTiff(File tiffImage, int layer){

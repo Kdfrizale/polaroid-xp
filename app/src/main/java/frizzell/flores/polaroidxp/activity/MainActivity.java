@@ -60,6 +60,55 @@ public class MainActivity extends AppCompatActivity {
         StorageHelper.createDirectoryTrees(this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //TODO switch to SharedPreferenceListen so we only have to update when user edits fields
+        TextView captionTextView = (TextView) findViewById(R.id.captionTextView);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key), getResources().getString(R.string.default_caption));
+        captionTextView.setText(captionPref);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsPageActivity.class));
+                return true;
+            case R.id.action_gallery:
+                startActivity(new Intent(this, GalleryActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_IMAGE_CAPTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if(mWorkingImageFile.exists()){
+                        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
+                        File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
+                        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
+                        SaveTiffTask createImageTask = new SaveTiffTask();
+                        createImageTask.execute(aParam);
+
+                    }
+                }
+        }
+    }
+
     private void checkPermission(Context context, String aPermission){
         Permissions.check(context, aPermission, null, new PermissionHandler() {
             @Override
@@ -101,37 +150,6 @@ public class MainActivity extends AppCompatActivity {
             }});
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //TODO switch to SharedPreferenceListen so we only have to update when user edits fields
-        TextView captionTextView = (TextView) findViewById(R.id.captionTextView);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String captionPref = sharedPref.getString(getResources().getString(R.string.Signed_Photo_Key), getResources().getString(R.string.default_caption));
-        captionTextView.setText(captionPref);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu_options, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsPageActivity.class));
-                return true;
-            case R.id.action_gallery:
-                startActivity(new Intent(this, GalleryActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -153,21 +171,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_CODE_IMAGE_CAPTURE:
-                if (resultCode == Activity.RESULT_OK) {
-                    if(mWorkingImageFile.exists()){
-                        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
-                        File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
-                        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
-                        SaveTiffTask createImageTask = new SaveTiffTask();
-                        createImageTask.execute(aParam);
 
-                    }
-                }
-        }
-    }
 }
