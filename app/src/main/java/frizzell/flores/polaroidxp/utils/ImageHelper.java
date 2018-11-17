@@ -67,6 +67,20 @@ public class ImageHelper {
         }
     }
 
+    public static void setImageOrientation(String jpegFilePath, int orientation){
+        if(orientation > 8 || orientation < 0){
+            orientation = 0;
+        }
+        try{
+            ExifInterface exif = new ExifInterface(jpegFilePath);
+            exif.setAttribute(ExifInterface.TAG_ORIENTATION,String.valueOf(orientation));
+            exif.saveAttributes();
+        }catch (Exception e){
+            Log.e(" Exif", "Error reading image orientation information");
+        }
+
+    }
+
     public static Matrix getOrientationMatrix(String filePath){
         int orientation = getImageOrientation(filePath);
         Matrix matrix = new Matrix();
