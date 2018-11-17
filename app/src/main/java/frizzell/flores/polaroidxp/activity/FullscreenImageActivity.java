@@ -36,7 +36,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 
         String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
-        mTiffImage = TiffHelper.getRelatedTiffFromJpeg(this, passedImageName);
+        mTiffImage = TiffHelper.getRelatedTiffFromJpeg(passedImageName);
         if(!mTiffImage.exists()){
             //TODO notify user that the image could not be found
             //Log error
@@ -71,7 +71,15 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            getAccelerometer(event);
+            float accelMagnitude = getAccelerometer(event);
+            if(accelMagnitude >= 1.7){
+                long actualTime = event.timestamp;
+                if (actualTime - mLastUpdate < 200) {
+                    return;
+                }
+                mLastUpdate = actualTime;
+                unFilterImage(mTiffImage);
+            }
         }
     }
 
@@ -136,11 +144,12 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView.startAnimation(mFadeOut);
 
         if(!TiffHelper.isFiltered(tiffImage)){
-            TiffHelper.setFilterStatus(this,tiffImage, true);
+            TiffHelper.setFilterStatus(tiffImage, true);
         }
     }
 
-    private void getAccelerometer(SensorEvent event) {//TODO rename this
+    private float getAccelerometer(SensorEvent event) {
+
         float[] values = event.values;
         float x = values[0];
         float y = values[1];
@@ -148,19 +157,10 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
         float accelationSquareRoot = (x * x + y * y + z * z)
                 / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
-        long actualTime = event.timestamp;
-        if (accelationSquareRoot >= 1.7) // sensitivity
-        {
-            if (actualTime - mLastUpdate < 200) {
-                return;
-            }
-//            Log.e("Sensor INFO", "X was: " + x);
-//            Log.e("Sensor INFO", "Y was: " + y);
-//            Log.e("Sensor INFO", "Z was: " + z);
-            mLastUpdate = actualTime;
-            unFilterImage(mTiffImage);
-        }
+        return accelationSquareRoot;
     }
+
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) { }

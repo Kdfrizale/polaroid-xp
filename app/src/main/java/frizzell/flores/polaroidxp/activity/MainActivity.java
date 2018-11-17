@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
 import io.fabric.sdk.android.Fabric;
@@ -100,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     if(mWorkingImageFile.exists()){
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
-                        SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
+                        TiffFileFactory.Options aParam = new TiffFileFactory.Options(mWorkingImageFile,filter);
+                        //SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
                         SaveTiffTask createImageTask = new SaveTiffTask();
                         createImageTask.execute(aParam);
 

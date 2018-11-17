@@ -40,8 +40,8 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final GalleryAdapter.ViewHolder viewHolder, int i){
         final File imageOriginal = mGalleryList[i];
-        final File tiffImage = TiffHelper.getRelatedTiffFromJpeg(this.context,imageOriginal.getName());//TODO this  can be improved by changing functions around
-        final File image = TiffHelper.getJpegToShowForTiff(this.context, tiffImage);
+        final File tiffImage = TiffHelper.getRelatedTiffFromJpeg(imageOriginal.getName());//TODO this  can be improved by changing functions around
+        final File image = TiffHelper.getJpegToShowForTiff(tiffImage);
 
 
         setUpImageView(viewHolder.img, imageOriginal);
