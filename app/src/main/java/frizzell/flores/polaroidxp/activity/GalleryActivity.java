@@ -9,9 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.asynctask.ConvertTiffToJpegTask;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
+import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 import java.io.File;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GalleryActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
@@ -30,7 +34,15 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
+        TiffHelper.checkAllTiffsHaveRelatedJpegs();
+
+        File tiffFiles[] = ImageHelper.getImagesInFolder(getString(R.string.tiffImagesFolder));
+        File files[] = new File[tiffFiles.length];
+        for(int i=0; i < tiffFiles.length;i++){
+            files[i]= TiffHelper.getRelatedJpegFromTiff(tiffFiles[i].getAbsolutePath());
+        }
+
+        //File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
 
         GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(), files);
         mRecyclerView.setAdapter(adapter);

@@ -6,11 +6,15 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.beyka.tiffbitmapfactory.TiffBitmapFactory;
+import org.beyka.tiffbitmapfactory.TiffConverter;
 
 import java.io.File;
+import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
 
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.application.App;
+import frizzell.flores.polaroidxp.asynctask.ConvertTiffToJpegTask;
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
 import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
@@ -86,6 +90,28 @@ public class TiffHelper {
             //return filter image
             return getFilterJpegFromTiff(tiffFile);
         }
+    }
+
+    public static void checkAllTiffsHaveRelatedJpegs(){
+        File tiffFiles[] = ImageHelper.getImagesInFolder(App.getContext().getString(R.string.tiffImagesFolder));
+        CountDownLatch doneSignal = new CountDownLatch(tiffFiles.length);
+        for(int i=0; i < tiffFiles.length; i++){
+            File relatedJpegFile = getRelatedJpegFromTiff(tiffFiles[i].getName());
+            if(!relatedJpegFile.exists()){
+                ConvertTiffToJpegTask.ConvertTiffTaskParam aParam = new ConvertTiffToJpegTask.ConvertTiffTaskParam(tiffFiles[i],relatedJpegFile, doneSignal);
+                ConvertTiffToJpegTask task = new ConvertTiffToJpegTask();
+                task.execute(aParam);
+            }
+            else{
+                doneSignal.countDown();
+            }
+        }
+//        try{
+//            doneSignal.await();
+//        }catch (InterruptedException ex){
+//            ex.printStackTrace();
+//
+//        }
     }
 
     public static void setFilterStatus(File tiffFile, boolean isUnfiltered){
