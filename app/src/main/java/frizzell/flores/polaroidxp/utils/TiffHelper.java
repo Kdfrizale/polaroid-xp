@@ -1,6 +1,5 @@
 package frizzell.flores.polaroidxp.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Environment;
@@ -13,7 +12,7 @@ import java.io.File;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.application.App;
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
-import frizzell.flores.polaroidxp.singleton.ActiveWorkLedger;
+import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 
 public class TiffHelper {
@@ -109,11 +108,11 @@ public class TiffHelper {
     }
 
     private static boolean isWorkClaimed(String aWorkItemKey){
-        return ActiveWorkLedger.getInstance().getActiveWork().contains(aWorkItemKey);
+        return ActiveWorkRepo.getInstance().getActiveWork().contains(aWorkItemKey);
     }
 
     private static void addWorkToLedger(String aWorkItemKey){
-        ActiveWorkLedger.getInstance().addActiveWork(aWorkItemKey);
+        ActiveWorkRepo.getInstance().addActiveWork(aWorkItemKey);
     }
 
 

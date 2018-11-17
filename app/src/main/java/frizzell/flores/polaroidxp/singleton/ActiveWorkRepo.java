@@ -2,14 +2,14 @@ package frizzell.flores.polaroidxp.singleton;
 
 import java.util.Vector;
 
-public class ActiveWorkLedger {
-    private static ActiveWorkLedger instance = null;
+public class ActiveWorkRepo {
+    private static ActiveWorkRepo instance = null;
     public Vector<String> activeWork = new Vector<String>();
-    private ActiveWorkLedger(){}
+    private ActiveWorkRepo(){}
 
-    public static synchronized ActiveWorkLedger getInstance(){
+    public static synchronized ActiveWorkRepo getInstance(){
         if(instance == null){
-            instance = new ActiveWorkLedger();
+            instance = new ActiveWorkRepo();
         }
         return instance;
     }

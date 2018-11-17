@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import java.io.File;
 
-import frizzell.flores.polaroidxp.singleton.ActiveWorkLedger;
+import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 
 public class SaveTiffTask extends AsyncTask<TiffFileFactory.Options, Integer, Boolean> {
@@ -20,6 +20,6 @@ public class SaveTiffTask extends AsyncTask<TiffFileFactory.Options, Integer, Bo
     }
 
     private void removeWorkFromLedger(String aWorkItemKey){
-        ActiveWorkLedger.getInstance().removeActiveWork(aWorkItemKey);
+        ActiveWorkRepo.getInstance().removeActiveWork(aWorkItemKey);
     }
 }
