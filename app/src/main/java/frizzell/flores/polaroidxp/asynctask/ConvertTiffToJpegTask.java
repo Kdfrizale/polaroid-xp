@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
 import frizzell.flores.polaroidxp.utils.ImageHelper;
+import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class ConvertTiffToJpegTask extends AsyncTask<ConvertTiffToJpegTask.ConvertTiffTaskParam, Void, Boolean> {
 
@@ -16,8 +17,10 @@ public class ConvertTiffToJpegTask extends AsyncTask<ConvertTiffToJpegTask.Conve
     protected Boolean doInBackground(ConvertTiffTaskParam... params){
         for (int i =0; i < params.length; i++) {
             boolean result = TiffConverter.convertTiffJpg(params[i].tiffImageFile.getAbsolutePath(), params[i].jpegImageFile.getAbsolutePath(), null, null);
+            String [] properties = TiffHelper.getLayerDescription(params[i].tiffImageFile, TiffHelper.TIFF_BASE_LAYER).split(TiffHelper.ImageDescription.delimiter);
+
             if(result){
-                ImageHelper.setImageOrientation(params[i].jpegImageFile.getAbsolutePath(),ExifInterface.ORIENTATION_ROTATE_90);
+                ImageHelper.setImageOrientation(params[i].jpegImageFile.getAbsolutePath(),Integer.parseInt(properties[TiffHelper.ImageDescription.ORIENTATION]));
             }
             params[i].countDown.countDown();
             return result;

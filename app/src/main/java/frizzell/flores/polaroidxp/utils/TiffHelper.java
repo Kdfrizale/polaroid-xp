@@ -24,13 +24,14 @@ public class TiffHelper {
     public final static int TIFF_FILTER_LAYER = 1;
 
     public static Bitmap getLayerOfTiff(File tiffImage, int layer){
+        layer = (layer < 0)? 0: layer;
+        int numberOfLayers = getNumberOfLayers(tiffImage);
+        String layerDescription = getLayerDescription(tiffImage, layer);
+
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        TiffBitmapFactory.decodeFile(tiffImage, options);
-        int numberOfLayers = options.outDirectoryCount;
         options.inJustDecodeBounds = false;
-        Log.e("Tiff desc","image description: " + options.outImageDescription);
-        String [] imageProperties = options.outImageDescription.split(ImageDescription.delimiter);
+        Log.e("Tiff desc","image description: " + layerDescription);
+        String [] imageProperties = layerDescription.split(ImageDescription.delimiter);
         Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(imageProperties[ImageDescription.ORIENTATION]));
         if(layer <= numberOfLayers - 1){
             options.inDirectoryNumber = layer;
@@ -41,6 +42,30 @@ public class TiffHelper {
             Bitmap temp = TiffBitmapFactory.decodeFile(tiffImage);
             return Bitmap.createBitmap(temp,0,0,temp.getWidth(),temp.getHeight(),matrix,true);
         }
+    }
+
+    public static String getLayerDescription(File tiffFile, int layer){
+        layer = (layer < 0)? 0: layer;
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        TiffBitmapFactory.decodeFile(tiffFile, options);
+        int numberOfLayers = options.outDirectoryCount;
+
+        if(layer <= numberOfLayers -1){
+            options.inDirectoryNumber = layer;
+            TiffBitmapFactory.decodeFile(tiffFile, options);
+        }
+        options.inDirectoryNumber = layer;
+        TiffBitmapFactory.decodeFile(tiffFile, options);
+
+        return options.outImageDescription;
+    }
+
+    public static int getNumberOfLayers(File tiffFile){
+        TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        TiffBitmapFactory.decodeFile(tiffFile, options);
+        return options.outDirectoryCount;
     }
 
     public static boolean isFiltered(File tiffImage){
@@ -148,7 +173,7 @@ public class TiffHelper {
         public static final int FILTERED =2;
         public static final int ORIENTATION =3;
 
-        private static final String delimiter = ",";
+        public static final String delimiter = ",";
 
         String mDescription = "";
         String mFilterFileName="";
