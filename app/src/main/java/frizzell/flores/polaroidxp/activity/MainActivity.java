@@ -58,7 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
         checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-        StorageHelper.createDirectoryTrees(this);
+        if(!StorageHelper.createDirectoryTrees(this)){
+            Log.e("PolaroidXP", "Could not create required folders, exiting app");
+            finish();
+            System.exit(0);
+        }
     }
 
     @Override

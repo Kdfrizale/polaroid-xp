@@ -62,7 +62,7 @@ public class ImageHelper {
             ExifInterface exif = new ExifInterface(filePath);
             return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
         }catch (Exception e){
-            Log.e("Fullscreen Exif", "Error, returning default orientation matrix");
+            Log.e("ImageHelper Exif", "Error, returning default orientation matrix");
             return 1;
         }
     }
@@ -76,7 +76,7 @@ public class ImageHelper {
             exif.setAttribute(ExifInterface.TAG_ORIENTATION,String.valueOf(orientation));
             exif.saveAttributes();
         }catch (Exception e){
-            Log.e(" Exif", "Error reading image orientation information");
+            Log.e("ImageHelper Exif", "Error reading image orientation information");
         }
 
     }
@@ -86,13 +86,10 @@ public class ImageHelper {
         Matrix matrix = new Matrix();
         if (orientation == 6) {
             matrix.postRotate(90);
-            Log.d("EXIF", "Exif: " + orientation);
         } else if (orientation == 3) {
             matrix.postRotate(180);
-            Log.d("EXIF", "Exif: " + orientation);
         } else if (orientation == 8) {
             matrix.postRotate(270);
-            Log.d("EXIF", "Exif: " + orientation);
         }
         return matrix;
     }
@@ -101,13 +98,10 @@ public class ImageHelper {
         Matrix matrix = new Matrix();
         if (orientation == 6) {
             matrix.postRotate(90);
-            Log.d("EXIF", "Exif: " + orientation);
         } else if (orientation == 3) {
             matrix.postRotate(180);
-            Log.d("EXIF", "Exif: " + orientation);
         } else if (orientation == 8) {
             matrix.postRotate(270);
-            Log.d("EXIF", "Exif: " + orientation);
         }
         return matrix;
     }

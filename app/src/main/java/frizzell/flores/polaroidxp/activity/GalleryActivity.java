@@ -34,17 +34,17 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setDrawingCacheEnabled(true);
         mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        TiffHelper.checkAllTiffsHaveRelatedJpegs();
+        //TiffHelper.checkAllTiffsHaveRelatedJpegs();
 
         File tiffFiles[] = ImageHelper.getImagesInFolder(getString(R.string.tiffImagesFolder));
-        File files[] = new File[tiffFiles.length];
-        for(int i=0; i < tiffFiles.length;i++){
-            files[i]= TiffHelper.getRelatedJpegFromTiff(tiffFiles[i].getAbsolutePath());
-        }
+//        File files[] = new File[tiffFiles.length];
+//        for(int i=0; i < tiffFiles.length;i++){
+//            files[i]= TiffHelper.getRelatedJpegFromTiff(tiffFiles[i].getAbsolutePath());
+//        }
 
         //File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));
 
-        GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(), files);
+        GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(), tiffFiles);
         mRecyclerView.setAdapter(adapter);
     }
 

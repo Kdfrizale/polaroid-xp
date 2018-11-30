@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,18 +17,21 @@ import android.widget.ImageView;
 import java.io.File;
 
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.application.App;
 import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
 import frizzell.flores.polaroidxp.asynctask.SaveBitmapToCacheTask;
+import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
 
-    ImageView mImageView;
-    File mTiffImage;
+    private ImageView mImageView;
+    private File mTiffImage;
     private LruCache<String, Bitmap> mMemoryCache;
     private AlphaAnimation mFadeOut;
     private long mLastUpdate;
     private SensorManager mSensorManager;
+    private int SENSOR_TIME_INTERVAL = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +39,9 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         setContentView(R.layout.activity_fullscreen_image);
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 
-        String passedImageName = (String) getIntent().getExtras().get("ImageFileName");
-        mTiffImage = TiffHelper.getRelatedTiffFromJpeg(passedImageName);
+        File passedImageName = (File) getIntent().getExtras().get("ImageFileName");
+        mTiffImage = passedImageName;
+        //mTiffImage = TiffHelper.getRelatedTiffFromJpeg(passedImageName);
         if(!mTiffImage.exists()){
             //TODO notify user that the image could not be found
             //Log error
@@ -45,7 +50,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
         setUpCache();
 
-        loadStartingImage(mTiffImage, (TiffHelper.isFiltered(mTiffImage)) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
+        loadStartingImage(mTiffImage, (TiffHelper.isUnfiltered(mTiffImage)) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
 
         setUpAnimation();
 
@@ -71,12 +76,8 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float accelMagnitude = getAccelerometer(event);
-            if(accelMagnitude >= 1.7){
-                long actualTime = event.timestamp;
-                if (actualTime - mLastUpdate < 200) {
-                    return;
-                }
+            long actualTime = event.timestamp;
+            if(getAccelerometer(event) >= 1.7 && actualTime - mLastUpdate > SENSOR_TIME_INTERVAL){
                 mLastUpdate = actualTime;
                 unFilterImage(mTiffImage);
             }
@@ -143,8 +144,8 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         startLoadTiffTask(tiffImage, TiffHelper.TIFF_BASE_LAYER);
         mImageView.startAnimation(mFadeOut);
 
-        if(!TiffHelper.isFiltered(tiffImage)){
-            TiffHelper.setFilterStatus(tiffImage, true);
+        if(!TiffHelper.isUnfiltered(tiffImage)){
+            TiffHelper.setUnfilterStatus(tiffImage, true);
         }
     }
 

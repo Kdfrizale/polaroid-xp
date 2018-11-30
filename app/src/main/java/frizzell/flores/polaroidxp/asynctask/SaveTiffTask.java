@@ -6,6 +6,7 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
+import frizzell.flores.polaroidxp.utils.StorageHelper;
 
 public class SaveTiffTask extends AsyncTask<TiffFileFactory.Options, Integer, Boolean> {
     @Override

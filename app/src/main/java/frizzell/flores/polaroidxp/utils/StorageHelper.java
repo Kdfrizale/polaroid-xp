@@ -26,6 +26,10 @@ public class StorageHelper {
         if (!folder.exists()) {
             return folder.mkdirs();
         }
-        return false;
+        return true;
+    }
+
+    public static String removeFileSuffix(String filename){
+        return filename.substring(0,filename.lastIndexOf('.'));
     }
 }

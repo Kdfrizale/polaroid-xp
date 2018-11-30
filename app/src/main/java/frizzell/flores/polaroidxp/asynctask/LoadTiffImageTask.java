@@ -27,8 +27,8 @@ public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskP
     @Override
     protected Bitmap doInBackground(LoadTiffTaskParam... params){
         for (int i =0; i < params.length; i++){
-            mKey = params[i].tiffImageFile.getAbsolutePath() + Integer.toString(params[i].selectedLayer);
             if( mLruCache != null){
+                mKey = params[i].tiffImageFile.getAbsolutePath() + Integer.toString(params[i].selectedLayer);
                 Bitmap result = mLruCache.get(mKey);
                 if(result != null){
                     return result;

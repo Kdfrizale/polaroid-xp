@@ -33,7 +33,7 @@ public class TiffFileFactory {
     private static File createTiffFromJpeg(final Options options){
         if(StorageHelper.isExternalStorageWritable()){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), App.getContext().getString(R.string.tiffImagesFolder));
-            File tempTiff = new File(storageDir, options.jpegBaseFile.getName() + ".tif");
+            File tempTiff = new File(storageDir, StorageHelper.removeFileSuffix(options.jpegBaseFile.getName()) + ".tif");
             TiffConverter.ConverterOptions tiffOptions = new TiffConverter.ConverterOptions();
             tiffOptions.compressionScheme = options.compressionScheme;
             tiffOptions.imageDescription = options.baseImageDescription.encodeToString();
