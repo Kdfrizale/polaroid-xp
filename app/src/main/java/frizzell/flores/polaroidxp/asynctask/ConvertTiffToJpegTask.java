@@ -22,7 +22,9 @@ public class ConvertTiffToJpegTask extends AsyncTask<ConvertTiffToJpegTask.Conve
                 String [] properties = TiffHelper.getLayerDescription(params[i].tiffImageFile, TiffHelper.TIFF_BASE_LAYER).split(TiffHelper.ImageDescription.delimiter);
                 ImageHelper.setImageOrientation(params[i].jpegImageFile.getAbsolutePath(),Integer.parseInt(properties[TiffHelper.ImageDescription.ORIENTATION]));
             }
-            params[i].countDown.countDown();
+            if(params[i].countDown != null){
+                params[i].countDown.countDown();
+            }
             return result;
         }
         return false;

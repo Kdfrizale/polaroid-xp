@@ -83,7 +83,7 @@ public class TiffHelper {
     public static File getFilterJpegFromTiff(File tiffFile){
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inDirectoryNumber = TIFF_FILTER_LAYER;
+        options.inDirectoryNumber = validateLayer(tiffFile,TIFF_FILTER_LAYER);
 
         TiffBitmapFactory.decodeFile(tiffFile, options);
 
@@ -120,13 +120,24 @@ public class TiffHelper {
                 doneSignal.countDown();
             }
         }
-//        try{
-//            doneSignal.await();
-//        }catch (InterruptedException ex){
-//            ex.printStackTrace();
-//
-//        }
+        try{
+            doneSignal.await();
+        }catch (InterruptedException ex){
+            ex.printStackTrace();
+
+        }
     }
+
+    public static void checkIfJpegBaseExistsFromTiff(File tiffFile, CountDownLatch doneSignal){
+        File jpegFile = getRelatedJpegFromTiff(tiffFile.getName());
+        if(!jpegFile.exists()){
+            ConvertTiffToJpegTask.ConvertTiffTaskParam aParam = new ConvertTiffToJpegTask.ConvertTiffTaskParam(tiffFile,jpegFile, doneSignal);//TODO switch to use thread or a different executor pool so that asynctasks can remain free for UI changes
+            ConvertTiffToJpegTask task = new ConvertTiffToJpegTask();
+            task.execute(aParam);
+        }
+    }
+
+
 
     public static void setUnfilterStatus(File tiffFile, boolean isUnfiltered){
         if(!isWorkClaimed(tiffFile.getAbsolutePath())){

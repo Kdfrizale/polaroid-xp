@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
@@ -39,14 +40,18 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final GalleryAdapter.ViewHolder viewHolder, int i){
-        //final File imageOriginal = mGalleryList[i];
-        //final File tiffImage = TiffHelper.getRelatedTiffFromJpeg(imageOriginal.getName());//TODO this  can be improved by changing functions around
         final File tiffImage = mGalleryList[i];
+        CountDownLatch doneSignal = new CountDownLatch(1);
+        TiffHelper.checkIfJpegBaseExistsFromTiff(tiffImage, doneSignal);
+//        try{
+//            doneSignal.await();
+//        }catch (InterruptedException ex){
+//            ex.printStackTrace();
+//
+//        }
+
         final File image = TiffHelper.getJpegToShowForTiff(tiffImage);
-
-        //TODO add a check here to see if jpeg image exist, if it does not create a converterTask to make it
-
-
+        
         setUpImageView(viewHolder.img, tiffImage);
 
         Log.e("Glide","image name: " + image.getAbsolutePath());
