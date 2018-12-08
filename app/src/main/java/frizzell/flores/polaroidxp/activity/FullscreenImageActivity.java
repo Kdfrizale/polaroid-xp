@@ -24,6 +24,7 @@ import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
+    private final String TAG = getClass().getSimpleName();
 
     private ImageView mImageView;
     private File mTiffImage;
@@ -44,7 +45,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         //mTiffImage = TiffHelper.getRelatedTiffFromJpeg(passedImageName);
         if(!mTiffImage.exists()){
             //TODO notify user that the image could not be found
-            //Log error
+            Log.e(TAG,"Received file does not exist, exiting activity");
             finish();
         }
 
@@ -87,7 +88,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     private void setUpCache(){
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 2;
-        Log.e("SIZE OF CACHE", "SIZE OF CACHE IS: "  +Integer.toString(cacheSize));
+        Log.i(TAG, "Size of created cache is: "  +Integer.toString(cacheSize));
 
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override

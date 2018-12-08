@@ -8,6 +8,7 @@ import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 
 public class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
+    private final String TAG = getClass().getSimpleName();
     private LruCache<String,Bitmap> memoryCache;
 
     public SaveBitmapToCacheTask(LruCache<String,Bitmap> memoryCache){

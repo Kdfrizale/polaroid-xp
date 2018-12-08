@@ -21,6 +21,7 @@ import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
+    private final String TAG = getClass().getSimpleName();
     private File[] mGalleryList;
     private Context context;
     private View myView;
@@ -51,10 +52,10 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
 //        }
 
         final File image = TiffHelper.getJpegToShowForTiff(tiffImage);
-        
+
         setUpImageView(viewHolder.img, tiffImage);
 
-        Log.e("Glide","image name: " + image.getAbsolutePath());
+        Log.i(TAG,"image name: " + image.getAbsolutePath());
         Glide.with(this.myView).load(image).into(viewHolder.img);
     }
 

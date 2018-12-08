@@ -3,6 +3,7 @@ package frizzell.flores.polaroidxp.utils;
 import android.util.Log;
 
 public class LogHelper {
+    private final String TAG = getClass().getSimpleName();
 
     public static class Stopwatch{
         private long mStartTime;

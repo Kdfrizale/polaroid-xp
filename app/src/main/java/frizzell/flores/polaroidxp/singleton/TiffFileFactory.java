@@ -18,6 +18,7 @@ import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class TiffFileFactory {
+    private static final String TAG = TiffFileFactory.class.getSimpleName();
 
     private TiffFileFactory(){}
 
@@ -38,11 +39,11 @@ public class TiffFileFactory {
             tiffOptions.compressionScheme = options.compressionScheme;
             tiffOptions.imageDescription = options.baseImageDescription.encodeToString();
             if(TiffConverter.convertJpgTiff(options.jpegBaseFile.getAbsolutePath(), tempTiff.getAbsolutePath(), tiffOptions, null)){
-                Log.e("Success Tiff Conversion","Returning file");
+                Log.i(TAG,"Successful Tiff Conversion");
                 return tempTiff;
             }
         }
-        Log.e("Failed Tiff Conversion","Returning null file");
+        Log.e(TAG,"Failed Tiff Conversion");
         return null;
     }
 

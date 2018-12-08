@@ -40,6 +40,7 @@ import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;
+    private final String TAG = getClass().getSimpleName();
 
     ImageView mImageView;
     File mWorkingImageFile;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if(!StorageHelper.createDirectoryTrees(this)){
-            Log.e("PolaroidXP", "Could not create required folders, exiting app");
+            Log.e(TAG, "Could not create required folders, exiting app");
             finish();
             System.exit(0);
         }
@@ -106,10 +107,8 @@ public class MainActivity extends AppCompatActivity {
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
                         TiffFileFactory.Options aParam = new TiffFileFactory.Options(mWorkingImageFile,filter);
-                        //SaveTiffTask.SaveTiffTaskParam aParam = new SaveTiffTask.SaveTiffTaskParam(getString(R.string.tiffImagesFolder),mWorkingImageFile,filter);
                         SaveTiffTask createImageTask = new SaveTiffTask();
                         createImageTask.execute(aParam);
-
                     }
                 }
         }
@@ -119,12 +118,12 @@ public class MainActivity extends AppCompatActivity {
         Permissions.check(context, aPermission, null, new PermissionHandler() {
             @Override
             public void onGranted() {
-                Log.d("PolaroidXP", "PERMISSIONS GRANTED");
+                Log.i(TAG, "PERMISSIONS GRANTED");
             }
 
             @Override
             public void onDenied(Context context, ArrayList<String> deniedPermissions) {
-                Log.e("PolaroidXP", "PERMISSION DENIED, exiting app");
+                Log.e(TAG, "PERMISSION DENIED, exiting app");
                 finish();
                 System.exit(0);
             }
@@ -162,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 mWorkingImageFile = ImageHelper.createImageFile(getString(R.string.jpegImagesFolder),".jpg");
             } catch (IOException ex) {
-                Log.e("PolaroidXP", "IO exception", ex);
+                Log.e(TAG, "IO exception", ex);
                 checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 return;
             }

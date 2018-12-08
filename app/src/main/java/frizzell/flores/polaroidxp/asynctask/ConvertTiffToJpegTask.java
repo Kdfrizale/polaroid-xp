@@ -12,6 +12,7 @@ import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class ConvertTiffToJpegTask extends AsyncTask<ConvertTiffToJpegTask.ConvertTiffTaskParam, Void, Boolean> {
+    private final String TAG = getClass().getSimpleName();
 
     @Override
     protected Boolean doInBackground(ConvertTiffTaskParam... params){

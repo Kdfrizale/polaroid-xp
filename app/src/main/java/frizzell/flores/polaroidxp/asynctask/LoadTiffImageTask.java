@@ -9,6 +9,7 @@ import java.io.File;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
+    private final String TAG = getClass().getSimpleName();
     private LruCache<String, Bitmap> mLruCache;
     private String mKey;
     public AsyncResponse response = null;

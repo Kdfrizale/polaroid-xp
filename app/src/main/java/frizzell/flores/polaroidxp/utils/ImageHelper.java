@@ -13,10 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ImageHelper {
+    private static final String TAG = ImageHelper.class.getSimpleName();
     public static File createImageFile(String parentDirectory, String fileSuffix) throws IOException {
         if(StorageHelper.isExternalStorageWritable()){
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "PolaroidXP_" + timeStamp + "_";
+            Log.i(TAG,"image file created: " + imageFileName);
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
             //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             storageDir.mkdirs();
@@ -62,7 +64,7 @@ public class ImageHelper {
             ExifInterface exif = new ExifInterface(filePath);
             return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
         }catch (Exception e){
-            Log.e("ImageHelper Exif", "Error, returning default orientation matrix");
+            Log.e(TAG, "Error, returning default orientation matrix");
             return 1;
         }
     }
@@ -76,7 +78,7 @@ public class ImageHelper {
             exif.setAttribute(ExifInterface.TAG_ORIENTATION,String.valueOf(orientation));
             exif.saveAttributes();
         }catch (Exception e){
-            Log.e("ImageHelper Exif", "Error reading image orientation information");
+            Log.e(TAG, "Error reading image orientation information");
         }
 
     }

@@ -3,6 +3,7 @@ package frizzell.flores.polaroidxp.singleton;
 import java.util.Vector;
 
 public class ActiveWorkRepo {
+    private final String TAG = getClass().getSimpleName();
     private static ActiveWorkRepo instance = null;
     public Vector<String> activeWork = new Vector<String>();
     private ActiveWorkRepo(){}

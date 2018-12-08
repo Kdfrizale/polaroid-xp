@@ -9,6 +9,7 @@ import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
 
 public class SaveTiffTask extends AsyncTask<TiffFileFactory.Options, Integer, Boolean> {
+    private final String TAG = getClass().getSimpleName();
     @Override
     protected Boolean doInBackground(TiffFileFactory.Options... params) {
         for (int i =0; i < params.length; i++){

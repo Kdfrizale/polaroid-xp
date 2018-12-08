@@ -18,6 +18,7 @@ import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 
 public class TiffHelper {
+    private static final String TAG = TiffHelper.class.getSimpleName();
     public final static int TIFF_BASE_LAYER = 0;
     public final static int TIFF_FILTER_LAYER = 1;
 
@@ -26,7 +27,7 @@ public class TiffHelper {
         String layerDescription = getLayerDescription(tiffImage, layer);
 
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
-        Log.e("Tiff desc","image description: " + layerDescription);
+        Log.e(TAG,"image description: " + layerDescription);
         String [] imageProperties = layerDescription.split(ImageDescription.delimiter);
         Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(imageProperties[ImageDescription.ORIENTATION]));
 
@@ -62,7 +63,7 @@ public class TiffHelper {
         options.inJustDecodeBounds = true;
         TiffBitmapFactory.decodeFile(tiffImage, options);
 
-        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+        Log.e(TAG, "Reading Tiff File options: " + options.outImageDescription);
         ImageDescription imageDescrip = ImageDescription.decodeImageDescription(options.outImageDescription);
         if(imageDescrip != null){
             return  imageDescrip.mIsUnfiltered;
@@ -87,7 +88,7 @@ public class TiffHelper {
 
         TiffBitmapFactory.decodeFile(tiffFile, options);
 
-        Log.e("Reading Tiff", "File options: " + options.outImageDescription);
+        Log.e(TAG, "Reading Tiff File options: " + options.outImageDescription);
         ImageDescription imageDescrip = ImageDescription.decodeImageDescription(options.outImageDescription);
         if(imageDescrip != null){
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),App.getContext().getString(R.string.filterImagesFolder));

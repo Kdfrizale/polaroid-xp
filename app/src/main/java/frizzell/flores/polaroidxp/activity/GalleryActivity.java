@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GalleryActivity extends AppCompatActivity {
+    private final String TAG = getClass().getSimpleName();
     RecyclerView mRecyclerView;
     static int mCurrentVisiblePosition;
     @Override
