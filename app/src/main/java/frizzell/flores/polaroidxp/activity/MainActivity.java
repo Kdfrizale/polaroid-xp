@@ -77,6 +77,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle bundle){
+        super.onSaveInstanceState(bundle);
+        bundle.putSerializable("mWorkingImageFile",mWorkingImageFile);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle bundle){
+        super.onRestoreInstanceState(bundle);
+        mWorkingImageFile = (File) bundle.getSerializable("mWorkingImageFile");
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu_options, menu);
         return true;
