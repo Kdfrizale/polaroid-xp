@@ -97,13 +97,14 @@ public class TiffHelper {
         return null;
     }
     public static File getJpegToShowForTiff(File tiffFile){
+        //TODO add check for how many layers
         if(isUnfiltered(tiffFile)){
             //return baseimage
             return getRelatedJpegFromTiff(tiffFile.getName());
         }
         else{
-            //return filter image
-            return getFilterJpegFromTiff(tiffFile);
+            //return filter image if TIFF has a filter
+            return (getNumberOfLayers(tiffFile) > 1)? getFilterJpegFromTiff(tiffFile):getRelatedJpegFromTiff(tiffFile.getName());
         }
     }
 

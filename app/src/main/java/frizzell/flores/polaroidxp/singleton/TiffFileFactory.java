@@ -49,10 +49,13 @@ public class TiffFileFactory {
 
     private static  boolean appendFilterToTiff(String tiffFilePath,final Options options){
         Bitmap filter = BitmapFactory.decodeFile(options.jpegFilterFile.getAbsolutePath());
-        TiffSaver.SaveOptions tiffOptions = new TiffSaver.SaveOptions();
-        tiffOptions.compressionScheme = options.compressionScheme;
-        tiffOptions.imageDescription = options.filterImageDescription.encodeToString();
-        return TiffSaver.appendBitmap(tiffFilePath, filter, tiffOptions);
+        if(filter != null){
+            TiffSaver.SaveOptions tiffOptions = new TiffSaver.SaveOptions();
+            tiffOptions.compressionScheme = options.compressionScheme;
+            tiffOptions.imageDescription = options.filterImageDescription.encodeToString();
+            return TiffSaver.appendBitmap(tiffFilePath, filter, tiffOptions);
+        }
+        return false;
     }
 
 
