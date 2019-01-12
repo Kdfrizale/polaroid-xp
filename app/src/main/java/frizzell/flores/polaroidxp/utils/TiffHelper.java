@@ -97,7 +97,6 @@ public class TiffHelper {
         return null;
     }
     public static File getJpegToShowForTiff(File tiffFile){
-        //TODO add check for how many layers
         if(isUnfiltered(tiffFile)){
             //return baseimage
             return getRelatedJpegFromTiff(tiffFile.getName());
