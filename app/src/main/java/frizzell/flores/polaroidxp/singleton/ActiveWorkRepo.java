@@ -31,4 +31,10 @@ public class ActiveWorkRepo {
         }
     }
 
+    public boolean isWorkClaimed(String aWorkItemKey){
+        synchronized (activeWork){
+            return activeWork.contains(aWorkItemKey);
+        }
+    }
+
 }

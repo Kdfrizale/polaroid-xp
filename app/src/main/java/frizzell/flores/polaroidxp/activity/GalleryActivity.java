@@ -40,7 +40,7 @@ public class GalleryActivity extends AppCompatActivity {
         File tiffFiles[] = ImageHelper.getImagesInFolder(getString(R.string.tiffImagesFolder));
 //        File files[] = new File[tiffFiles.length];
 //        for(int i=0; i < tiffFiles.length;i++){
-//            files[i]= TiffHelper.getRelatedJpegFromTiff(tiffFiles[i].getAbsolutePath());
+//            files[i]= TiffHelper.getRelatedJpeg(tiffFiles[i].getAbsolutePath());
 //        }
 
         //File files[] = ImageHelper.getImagesInFolder(getString(R.string.jpegImagesFolder));

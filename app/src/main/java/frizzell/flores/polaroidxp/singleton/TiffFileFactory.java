@@ -64,24 +64,24 @@ public class TiffFileFactory {
         public File jpegFilterFile;
         public CompressionScheme compressionScheme;
         public boolean isUnfiltered;
-        public TiffHelper.ImageDescription baseImageDescription;
-        public TiffHelper.ImageDescription filterImageDescription;
+        public TiffHelper.TiffImageDescription baseImageDescription;
+        public TiffHelper.TiffImageDescription filterImageDescription;
 
         public Options(File jpegBaseFile, File jpegFilterFile){
             this.jpegBaseFile = jpegBaseFile;
             this.jpegFilterFile = jpegFilterFile;
             this.compressionScheme = CompressionScheme.JPEG;
             this.isUnfiltered = false;
-            this.baseImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
-            this.filterImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.baseImageDescription = new TiffHelper.TiffImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.filterImageDescription = new TiffHelper.TiffImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         }
         public Options(File jpegBaseFile, File jpegFilterFile, boolean isUnfiltered){
             this.jpegBaseFile = jpegBaseFile;
             this.jpegFilterFile = jpegFilterFile;
             this.compressionScheme = CompressionScheme.JPEG;
             this.isUnfiltered = isUnfiltered;
-            this.baseImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
-            this.filterImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.baseImageDescription = new TiffHelper.TiffImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.filterImageDescription = new TiffHelper.TiffImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         }
     }
 }

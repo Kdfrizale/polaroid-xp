@@ -59,16 +59,16 @@ public class ImageHelper {
 
     }
 
-    public static int getImageOrientation(String filePath){
-        try{
-            ExifInterface exif = new ExifInterface(filePath);
-            return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
-        }catch (Exception e){
-            Log.e(TAG, "Error, returning default orientation matrix");
-            return 1;
-        }
-    }
-
+//    public static int getImageOrientation(String filePath){
+//        try{
+//            ExifInterface exif = new ExifInterface(filePath);
+//            return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
+//        }catch (Exception e){
+//            Log.e(TAG, "Error, returning default orientation matrix");
+//            return 1;
+//        }
+//    }
+//
     public static void setImageOrientation(String jpegFilePath, int orientation){
         if(orientation > 8 || orientation < 0){
             orientation = 0;
@@ -83,18 +83,18 @@ public class ImageHelper {
 
     }
 
-    public static Matrix getOrientationMatrix(String filePath){
-        int orientation = getImageOrientation(filePath);
-        Matrix matrix = new Matrix();
-        if (orientation == 6) {
-            matrix.postRotate(90);
-        } else if (orientation == 3) {
-            matrix.postRotate(180);
-        } else if (orientation == 8) {
-            matrix.postRotate(270);
-        }
-        return matrix;
-    }
+//    public static Matrix getOrientationMatrix(String filePath){
+//        int orientation = getImageOrientation(filePath);
+//        Matrix matrix = new Matrix();
+//        if (orientation == 6) {
+//            matrix.postRotate(90);
+//        } else if (orientation == 3) {
+//            matrix.postRotate(180);
+//        } else if (orientation == 8) {
+//            matrix.postRotate(270);
+//        }
+//        return matrix;
+//    }
 
     public static Matrix getOrientationMatrix(int orientation){
         Matrix matrix = new Matrix();
