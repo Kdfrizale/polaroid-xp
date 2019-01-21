@@ -4,16 +4,11 @@ import java.util.Vector;
 
 public class ActiveWorkRepo {
     private final String TAG = getClass().getSimpleName();
-    private static ActiveWorkRepo instance = null;
+    private static final ActiveWorkRepo instance = new ActiveWorkRepo();
     public Vector<String> activeWork = new Vector<String>();
     private ActiveWorkRepo(){}
 
-    public static synchronized ActiveWorkRepo getInstance(){
-        if(instance == null){
-            instance = new ActiveWorkRepo();
-        }
-        return instance;
-    }
+    public static synchronized ActiveWorkRepo getInstance(){ return instance; }
 
     public Vector<String> getActiveWork(){
         return this.activeWork;
