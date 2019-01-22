@@ -20,6 +20,7 @@ import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.application.App;
 import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
 import frizzell.flores.polaroidxp.asynctask.SaveBitmapToCacheTask;
+import frizzell.flores.polaroidxp.entity.TiffImage;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
@@ -29,7 +30,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     //TODO redesign this to have TiffImage Object
     private ImageView mImageView;
-    private File mTiffImage;
+    private TiffImage mTiffImage;
     private LruCache<String, Bitmap> mMemoryCache;
     private AlphaAnimation mFadeOut;
     private long mLastUpdate;
@@ -43,17 +44,18 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mImageView = (ImageView) findViewById(R.id.fullScreenImg);
 
         File passedImageName = (File) getIntent().getExtras().get("ImageFileName");
-        mTiffImage = passedImageName;
+
         //mTiffImage = TiffHelper.getRelatedTiffFromJpeg(passedImageName);
-        if(!mTiffImage.exists()){
+        if(!passedImageName.exists()){
             //TODO notify user that the image could not be found
             Log.e(TAG,"Received file does not exist, exiting activity");
             finish();
         }
+        mTiffImage = new TiffImage(passedImageName);
 
         setUpCache();
 
-        loadStartingImage(mTiffImage, (TiffHelper.isUnfiltered(mTiffImage)) ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER);
+        loadStartingImage(mTiffImage.getTiffFile(), (mTiffImage.isUnfiltered() ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER));
 
         setUpAnimation();
 
@@ -143,12 +145,12 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
     }
 
-    private void unFilterImage(File tiffImage){
-        startLoadTiffTask(tiffImage, TiffHelper.TIFF_BASE_LAYER);
+    private void unFilterImage(TiffImage tiffImage){
+        startLoadTiffTask(tiffImage.getTiffFile(), TiffHelper.TIFF_BASE_LAYER);
         mImageView.startAnimation(mFadeOut);
 
-        if(!TiffHelper.isUnfiltered(tiffImage)){
-            TiffHelper.setUnfilterStatus(tiffImage, true);
+        if(!tiffImage.isUnfiltered()){
+            tiffImage.setUnfilterStatus(true);
         }
     }
 

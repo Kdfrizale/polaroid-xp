@@ -123,7 +123,7 @@ public class TiffImage {
         }
     }
 
-    public void setUnfilterStatus(File tiffFile, boolean isUnfiltered){
+    public void setUnfilterStatus(boolean isUnfiltered){
         if(!isWorkClaimed(tiffFile.getAbsolutePath())){
             addWorkToLedger(tiffFile.getAbsolutePath());
 
