@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
+
+import frizzell.flores.polaroidxp.entity.TiffImage;
 
 public class ImageHelper {
     private static final String TAG = ImageHelper.class.getSimpleName();
@@ -31,6 +34,15 @@ public class ImageHelper {
     public static File[] getImagesInFolder(String parentDirectory){
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
         return storageDir.listFiles();
+    }
+
+    public static Vector<TiffImage> getTiffImagesInFolder(String parentDirectory){
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),parentDirectory);
+        Vector<TiffImage> tiffsInFolder = new Vector<TiffImage>();
+        for (File aFile: storageDir.listFiles()) {
+            tiffsInFolder.add(new TiffImage(aFile));
+        }
+        return tiffsInFolder;
     }
 
     public static Orientation getOrientationEnum(int ordinal){

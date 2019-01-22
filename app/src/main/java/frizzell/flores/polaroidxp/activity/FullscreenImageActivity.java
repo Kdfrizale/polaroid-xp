@@ -26,6 +26,8 @@ import frizzell.flores.polaroidxp.utils.TiffHelper;
 public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
     private final String TAG = getClass().getSimpleName();
 
+
+    //TODO redesign this to have TiffImage Object
     private ImageView mImageView;
     private File mTiffImage;
     private LruCache<String, Bitmap> mMemoryCache;

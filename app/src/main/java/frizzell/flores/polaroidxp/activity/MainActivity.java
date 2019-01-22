@@ -118,12 +118,14 @@ public class MainActivity extends AppCompatActivity {
                     if(mWorkingImageFile.exists()){
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
                         File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
-                        TiffFileFactory.Options aParam = new TiffFileFactory.Options(mWorkingImageFile,filter);
-                        SaveTiffTask createImageTask = new SaveTiffTask();
-                        createImageTask.execute(aParam);
+                        requestTiffCreation(mWorkingImageFile,filter);
                     }
                 }
         }
+    }
+
+    private void requestTiffCreation(File jpegBaseFile, File jpegFilterFile){
+        TiffFileFactory.handleTiffCreation(jpegBaseFile,jpegFilterFile);
     }
 
     private void checkPermission(Context context, String aPermission){

@@ -10,6 +10,7 @@ import android.view.View;
 
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.asynctask.ConvertTiffToJpegTask;
+import frizzell.flores.polaroidxp.entity.TiffImage;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
@@ -37,7 +38,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         //TiffHelper.checkAllTiffsHaveRelatedJpegs();
 
-        File tiffFiles[] = ImageHelper.getImagesInFolder(getString(R.string.tiffImagesFolder));
+        Vector<TiffImage> tiffFiles = ImageHelper.getTiffImagesInFolder(getString(R.string.tiffImagesFolder));
 //        File files[] = new File[tiffFiles.length];
 //        for(int i=0; i < tiffFiles.length;i++){
 //            files[i]= TiffHelper.getRelatedJpegFromTiff(tiffFiles[i].getAbsolutePath());

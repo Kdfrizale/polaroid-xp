@@ -13,6 +13,7 @@ import java.io.File;
 
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.application.App;
+import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
@@ -21,6 +22,13 @@ public class TiffFileFactory {
     private static final String TAG = TiffFileFactory.class.getSimpleName();
 
     private TiffFileFactory(){}
+
+    //TODO reduce coupling here
+    public static void handleTiffCreation(File jpegBaseFile, File jpegFilterFile){
+        TiffFileFactory.Options aParam = new TiffFileFactory.Options(jpegBaseFile,jpegFilterFile);
+        SaveTiffTask createImageTask = new SaveTiffTask();
+        createImageTask.execute(aParam);
+    }
 
     public static File createTiffFile(final Options options){
         File tempTiff = createTiffFromJpeg(options);

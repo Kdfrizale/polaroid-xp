@@ -14,19 +14,21 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 
 import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
+import frizzell.flores.polaroidxp.entity.TiffImage;
 import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
-    private File[] mGalleryList;
+    private Vector<TiffImage> mGalleryList;
     private Context context;
     private View myView;
 
-    public GalleryAdapter(Context context, File[] galleryList){
+    public GalleryAdapter(Context context, Vector<TiffImage> galleryList){
         this.mGalleryList = galleryList;
         this.context = context;
     }
@@ -41,9 +43,10 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final GalleryAdapter.ViewHolder viewHolder, int i){
-        final File tiffImage = mGalleryList[i];
+        final TiffImage tiffImage = mGalleryList.get(i);
         CountDownLatch doneSignal = new CountDownLatch(1);
-        TiffHelper.checkIfJpegBaseExistsFromTiff(tiffImage, doneSignal);
+        tiffImage.checkIfJpegBaseExists();
+        //TiffHelper.checkIfJpegBaseExists(tiffImage, doneSignal);
 //        try{
 //            doneSignal.await();
 //        }catch (InterruptedException ex){
@@ -51,9 +54,9 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
 //
 //        }
 
-        final File image = TiffHelper.getJpegToShowForTiff(tiffImage);
+        final File image = tiffImage.getJpegToShow();
 
-        setUpImageView(viewHolder.img, tiffImage);
+        setUpImageView(viewHolder.img, tiffImage.getTiffFile());
 
         Log.i(TAG,"image name: " + image.getAbsolutePath());
         Glide.with(this.myView).load(image).into(viewHolder.img);
@@ -81,7 +84,7 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount(){
-        return mGalleryList.length;
+        return mGalleryList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

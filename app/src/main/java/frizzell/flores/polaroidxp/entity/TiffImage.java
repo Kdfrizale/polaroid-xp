@@ -24,9 +24,15 @@ public class TiffImage {
     public final static int TIFF_BASE_LAYER = 0;
     public final static int TIFF_FILTER_LAYER = 1;
 
+    public File getTiffFile() {
+        return tiffFile;
+    }
+
     private File tiffFile;
-    private File jpegBaseFile;
-    private File jpegFilterFile;
+
+    public TiffImage(File tiffFile){
+        this.tiffFile = tiffFile;
+    }
 
     public Bitmap getLayerOfTiff(int layer){
         layer = validateLayer(layer);
@@ -97,7 +103,7 @@ public class TiffImage {
         }
         return null;
     }
-    public File getJpegToShowForTiff(){
+    public File getJpegToShow(){
         if(isUnfiltered()){
             //return baseimage
             return getRelatedJpegFromTiff(tiffFile.getName());
@@ -108,7 +114,7 @@ public class TiffImage {
         }
     }
     //TODO rename
-    public void checkIfJpegBaseExistsFromTiff(File tiffFile){
+    public void checkIfJpegBaseExists(){
         File jpegFile = getRelatedJpegFromTiff(tiffFile.getName());
         if(!jpegFile.exists()){
             ConvertTiffToJpegTask.ConvertTiffTaskParam aParam = new ConvertTiffToJpegTask.ConvertTiffTaskParam(tiffFile,jpegFile);//TODO switch to use thread or a different executor pool so that asynctasks can remain free for UI changes
