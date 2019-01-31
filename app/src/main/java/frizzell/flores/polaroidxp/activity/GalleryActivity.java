@@ -9,14 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import frizzell.flores.polaroidxp.R;
-import frizzell.flores.polaroidxp.asynctask.ConvertTiffToJpegTask;
 import frizzell.flores.polaroidxp.entity.TiffImage;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
-import java.io.File;
 import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GalleryActivity extends AppCompatActivity {
     private final String TAG = getClass().getSimpleName();

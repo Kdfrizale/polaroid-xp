@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.LruCache;
 
-import frizzell.flores.polaroidxp.utils.TiffHelper;
-
 
 public class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
     private final String TAG = getClass().getSimpleName();
@@ -17,9 +15,9 @@ public class SaveBitmapToCacheTask extends AsyncTask<LoadTiffImageTask.LoadTiffT
 
     @Override
     protected Bitmap doInBackground(LoadTiffImageTask.LoadTiffTaskParam... params) {
-        if(this.memoryCache.get(params[0].tiffImageFile.getAbsoluteFile() + Integer.toString(params[0].selectedLayer)) == null){
-            final Bitmap bitmap = TiffHelper.getLayerOfTiff(params[0].tiffImageFile, params[0].selectedLayer);
-            addBitmapToMemoryCache(this.memoryCache,params[0].tiffImageFile.getAbsoluteFile() + Integer.toString(params[0].selectedLayer), bitmap);
+        if(this.memoryCache.get(params[0].tiffImageFile.getTiffFile().getAbsoluteFile() + Integer.toString(params[0].selectedLayer)) == null){
+            final Bitmap bitmap = params[0].tiffImageFile.getLayerOfTiff(params[0].selectedLayer);
+            addBitmapToMemoryCache(this.memoryCache,params[0].tiffImageFile.getTiffFile().getAbsoluteFile() + Integer.toString(params[0].selectedLayer), bitmap);
             return bitmap;
         }
         return null;

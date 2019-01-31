@@ -20,7 +20,6 @@ import java.util.concurrent.CountDownLatch;
 import frizzell.flores.polaroidxp.OnGestureTouchListener;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.entity.TiffImage;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();

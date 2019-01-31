@@ -14,9 +14,9 @@ import java.io.File;
 import frizzell.flores.polaroidxp.R;
 import frizzell.flores.polaroidxp.application.App;
 import frizzell.flores.polaroidxp.asynctask.SaveTiffTask;
+import frizzell.flores.polaroidxp.entity.TiffImage;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class TiffFileFactory {
     private static final String TAG = TiffFileFactory.class.getSimpleName();
@@ -72,24 +72,24 @@ public class TiffFileFactory {
         public File jpegFilterFile;
         public CompressionScheme compressionScheme;
         public boolean isUnfiltered;
-        public TiffHelper.ImageDescription baseImageDescription;
-        public TiffHelper.ImageDescription filterImageDescription;
+        public TiffImage.ImageDescription baseImageDescription;
+        public TiffImage.ImageDescription filterImageDescription;
 
         public Options(File jpegBaseFile, File jpegFilterFile){
             this.jpegBaseFile = jpegBaseFile;
             this.jpegFilterFile = jpegFilterFile;
             this.compressionScheme = CompressionScheme.JPEG;
             this.isUnfiltered = false;
-            this.baseImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
-            this.filterImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.baseImageDescription = new TiffImage.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.filterImageDescription = new TiffImage.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         }
         public Options(File jpegBaseFile, File jpegFilterFile, boolean isUnfiltered){
             this.jpegBaseFile = jpegBaseFile;
             this.jpegFilterFile = jpegFilterFile;
             this.compressionScheme = CompressionScheme.JPEG;
             this.isUnfiltered = isUnfiltered;
-            this.baseImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
-            this.filterImageDescription = new TiffHelper.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.baseImageDescription = new TiffImage.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegBaseFile.getAbsolutePath()),"description",jpegFilterFile.getName());
+            this.filterImageDescription = new TiffImage.ImageDescription(isUnfiltered,ImageHelper.getImageOrientation(jpegFilterFile.getAbsolutePath()),"description",jpegFilterFile.getName());
         }
     }
 }

@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +16,9 @@ import android.widget.ImageView;
 import java.io.File;
 
 import frizzell.flores.polaroidxp.R;
-import frizzell.flores.polaroidxp.application.App;
 import frizzell.flores.polaroidxp.asynctask.LoadTiffImageTask;
 import frizzell.flores.polaroidxp.asynctask.SaveBitmapToCacheTask;
 import frizzell.flores.polaroidxp.entity.TiffImage;
-import frizzell.flores.polaroidxp.utils.StorageHelper;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class FullscreenImageActivity extends AppCompatActivity implements SensorEventListener{
     private final String TAG = getClass().getSimpleName();
@@ -55,7 +51,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
 
         setUpCache();
 
-        loadStartingImage(mTiffImage.getTiffFile(), (mTiffImage.isUnfiltered() ? TiffHelper.TIFF_BASE_LAYER : TiffHelper.TIFF_FILTER_LAYER));
+        loadStartingImage(mTiffImage, (mTiffImage.isUnfiltered() ? TiffImage.TIFF_BASE_LAYER : TiffImage.TIFF_FILTER_LAYER));
 
         setUpAnimation();
 
@@ -116,17 +112,17 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         mFadeOut.cancel();
     }
 
-    private void loadStartingImage(File tiffImage, int selectedLayer){
-        if(selectedLayer == TiffHelper.TIFF_FILTER_LAYER){
+    private void loadStartingImage(TiffImage tiffImage, int selectedLayer){
+        if(selectedLayer == TiffImage.TIFF_FILTER_LAYER){
             startLoadTiffTask(tiffImage,selectedLayer);
-            startBitmapToCacheTask(tiffImage,TiffHelper.TIFF_BASE_LAYER);
+            startBitmapToCacheTask(tiffImage,TiffImage.TIFF_BASE_LAYER);
         }
         else{
             startLoadTiffTask(tiffImage,selectedLayer);
         }
     }
 
-    private void startLoadTiffTask(File tiffImage, int selectedLayer){
+    private void startLoadTiffTask(TiffImage tiffImage, int selectedLayer){
         LoadTiffImageTask.AsyncResponse asyncResponse = new LoadTiffImageTask.AsyncResponse() {
             @Override
             public void processFinish(Bitmap bitmap) {
@@ -138,7 +134,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
         loadTiffTask.execute(aParam);
     }
 
-    private void startBitmapToCacheTask(File tiffImage, int selectedLayer){
+    private void startBitmapToCacheTask(TiffImage tiffImage, int selectedLayer){
         LoadTiffImageTask.LoadTiffTaskParam aParam = new LoadTiffImageTask.LoadTiffTaskParam(tiffImage, selectedLayer);
         SaveBitmapToCacheTask task = new SaveBitmapToCacheTask(mMemoryCache);
         task.execute(aParam);
@@ -146,7 +142,7 @@ public class FullscreenImageActivity extends AppCompatActivity implements Sensor
     }
 
     private void unFilterImage(TiffImage tiffImage){
-        startLoadTiffTask(tiffImage.getTiffFile(), TiffHelper.TIFF_BASE_LAYER);
+        startLoadTiffTask(tiffImage, TiffImage.TIFF_BASE_LAYER);
         mImageView.startAnimation(mFadeOut);
 
         if(!tiffImage.isUnfiltered()){

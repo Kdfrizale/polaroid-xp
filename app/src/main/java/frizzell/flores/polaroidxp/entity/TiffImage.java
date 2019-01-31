@@ -17,7 +17,6 @@ import frizzell.flores.polaroidxp.singleton.ActiveWorkRepo;
 import frizzell.flores.polaroidxp.singleton.TiffFileFactory;
 import frizzell.flores.polaroidxp.utils.ImageHelper;
 import frizzell.flores.polaroidxp.utils.StorageHelper;
-import frizzell.flores.polaroidxp.utils.TiffHelper;
 
 public class TiffImage {
     private static final String TAG = TiffImage.class.getSimpleName();
@@ -40,8 +39,8 @@ public class TiffImage {
 
         TiffBitmapFactory.Options options = new TiffBitmapFactory.Options();
         Log.e(TAG,"image description: " + layerDescription);
-        String [] imageProperties = layerDescription.split(TiffHelper.ImageDescription.delimiter);
-        Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(imageProperties[TiffHelper.ImageDescription.ORIENTATION]));
+        String [] imageProperties = layerDescription.split(TiffImage.ImageDescription.delimiter);
+        Matrix matrix = ImageHelper.getOrientationMatrix(Integer.parseInt(imageProperties[TiffImage.ImageDescription.ORIENTATION]));
 
         options.inJustDecodeBounds = false;
         options.inDirectoryNumber = layer;
@@ -113,11 +112,11 @@ public class TiffImage {
             return (getNumberOfLayers() > 1)? getFilterJpegFromTiff():getRelatedJpegFromTiff(tiffFile.getName());
         }
     }
-    //TODO rename
+    //TODO rename to show that it also creates the missing
     public void checkIfJpegBaseExists(){
         File jpegFile = getRelatedJpegFromTiff(tiffFile.getName());
         if(!jpegFile.exists()){
-            ConvertTiffToJpegTask.ConvertTiffTaskParam aParam = new ConvertTiffToJpegTask.ConvertTiffTaskParam(tiffFile,jpegFile);//TODO switch to use thread or a different executor pool so that asynctasks can remain free for UI changes
+            ConvertTiffToJpegTask.ConvertTiffTaskParam aParam = new ConvertTiffToJpegTask.ConvertTiffTaskParam(this,jpegFile);//TODO switch to use thread or a different executor pool so that asynctasks can remain free for UI changes
             ConvertTiffToJpegTask task = new ConvertTiffToJpegTask();
             task.execute(aParam);
         }

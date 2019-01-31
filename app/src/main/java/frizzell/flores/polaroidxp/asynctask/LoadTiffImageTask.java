@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.LruCache;
 
-import java.io.File;
-
-import frizzell.flores.polaroidxp.utils.TiffHelper;
+import frizzell.flores.polaroidxp.entity.TiffImage;
 
 public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskParam, Void, Bitmap> {
     private final String TAG = getClass().getSimpleName();
@@ -29,13 +27,13 @@ public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskP
     protected Bitmap doInBackground(LoadTiffTaskParam... params){
         for (int i =0; i < params.length; i++){
             if( mLruCache != null){
-                mKey = params[i].tiffImageFile.getAbsolutePath() + Integer.toString(params[i].selectedLayer);
+                mKey = params[i].tiffImageFile.getTiffFile().getAbsolutePath() + Integer.toString(params[i].selectedLayer);
                 Bitmap result = mLruCache.get(mKey);
                 if(result != null){
                     return result;
                 }
             }
-            return TiffHelper.getLayerOfTiff(params[i].tiffImageFile,params[i].selectedLayer);
+            return params[i].tiffImageFile.getLayerOfTiff(params[i].selectedLayer);
         }
         return null;
     }
@@ -51,10 +49,10 @@ public class LoadTiffImageTask extends AsyncTask<LoadTiffImageTask.LoadTiffTaskP
     }
 
     public static class LoadTiffTaskParam {
-        public File tiffImageFile;
+        public TiffImage tiffImageFile;
         public int selectedLayer;
 
-        public LoadTiffTaskParam(File tiffImageFile, int selectedLayer){
+        public LoadTiffTaskParam(TiffImage tiffImageFile, int selectedLayer){
             this.tiffImageFile = tiffImageFile;
             this.selectedLayer = selectedLayer;
         }
