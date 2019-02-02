@@ -49,6 +49,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mCurrentVisiblePosition);
         mCurrentVisiblePosition = 0;
     }
