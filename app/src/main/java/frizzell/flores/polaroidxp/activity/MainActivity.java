@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
             System.exit(0);
         }
+
+        StorageHelper.createFilterJpegsFromDrawables(this);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     if(mWorkingImageFile.exists()){
                         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),getString(R.string.filterImagesFolder));
-                        File filter = new File(storageDir,"1.jpg");//TODO change this to function getChosenFilter()
+                        File filter = new File(storageDir,"default.jpg");//TODO change this to function getChosenFilter()
                         requestTiffCreation(mWorkingImageFile,filter);
                     }
                 }
